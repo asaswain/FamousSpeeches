@@ -7,7 +7,6 @@ import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.os.Binder;
 import android.os.IBinder;
-import android.util.Log;
 import android.widget.Toast;
 
 import java.io.IOException;
@@ -15,7 +14,7 @@ import java.io.IOException;
 import edu.nyu.scps.SpeechPlayer.R;
 
 /**
- * This class play speeches in a service
+ * This class plays speeches in a service
  */
 
 public class MediaPlayerService extends Service implements AudioManager.OnAudioFocusChangeListener{
@@ -30,16 +29,14 @@ public class MediaPlayerService extends Service implements AudioManager.OnAudioF
     public MediaPlayerService() {
     }
 
+    // onCreate is called when service is first created
     @Override
     public void onCreate() {
         super.onCreate();
         mediaPlayer = new MediaPlayer();
-        //todo: solve "E/MediaPlayer﹕ Should have subtitle controller already set" error
-        //mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
     }
 
-    //called by the startService method of the Activity
-
+    // onStartCommand is called by the startService method of the Activity
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
 
@@ -67,7 +64,7 @@ public class MediaPlayerService extends Service implements AudioManager.OnAudioF
             mediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
                 @Override
                 public void onPrepared(MediaPlayer mp) {
-                    play();
+                    startPlayback();
                 }
             });
         }
@@ -75,12 +72,12 @@ public class MediaPlayerService extends Service implements AudioManager.OnAudioF
         return super.onStartCommand(intent, flags, startId);
     }
 
-    //getters and setters
-
+    // get current volume of playback
     public double getVolume() {
         return volume;
     }
 
+    // set volume of playback
     public void setVolume(float volume) {
         if (mediaPlayer.isPlaying()) {
             this.volume = volume;
@@ -88,24 +85,37 @@ public class MediaPlayerService extends Service implements AudioManager.OnAudioF
         }
     }
 
+    // get a percentage of how far we are through the recording (between 0.00 and 1.00)
     public double getProgress() {
         return calcProgress();
     }
 
+    // get time (in milliseconds) of how far we are through the recording
     public int getTime() {
         return calcTime();
     }
 
+    // set time (in milliseconds) for where we are in the recording
     public void setTime(int newTime) {
         mediaPlayer.pause();
         mediaPlayer.seekTo(newTime);
-        play();
+        startPlayback();
     }
 
+    // get duration (in milliseconds) of the recording
     public int getDuration() {
         return duration;
     }
 
+    // set the duration of the
+    private void setDuration(int duration) {
+        if (duration > 0) {
+            this.duration = duration;
+            durationSaved = true;
+        }
+    }
+
+    // if the mediaplayer is not null, then return the current time we are in the recording (in milliseconds)
     private int calcTime() {
         int currentTime = 0;
         if (mediaPlayer != null) {
@@ -116,16 +126,15 @@ public class MediaPlayerService extends Service implements AudioManager.OnAudioF
         return currentTime;
     }
 
+    // if the mediaplayer is not null then set durection of recording (if not already set),
+    // and then calculate percnetage if the records that has been played using the time and the duration
     private double calcProgress() {
         double progress = 0;
         if (mediaPlayer != null) {
-            // initialize duration of speec only once
+            // initialize duration of recording only once
             if (!durationSaved) {
-                if (mediaPlayer.getDuration() > 0) {
-                    duration = mediaPlayer.getDuration();
-                    Log.d("duration", "" + duration);
-                    durationSaved = true;
-                }
+                int duration = mediaPlayer.getDuration();
+                setDuration(duration);
             }
             if (duration > 0) {
                 progress = (double) calcTime() / duration;
@@ -135,7 +144,8 @@ public class MediaPlayerService extends Service implements AudioManager.OnAudioF
         return progress;
     }
 
-    public void play() {
+    // start playing record
+    public void startPlayback() {
         AudioManager audioManager = (AudioManager)getSystemService(Context.AUDIO_SERVICE);
         int result = audioManager.requestAudioFocus(this, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN);
         if (result == AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
@@ -146,16 +156,19 @@ public class MediaPlayerService extends Service implements AudioManager.OnAudioF
         }
     }
 
-    public void pause() {
+    // pause playing records
+    public void pausePlayback() {
         mediaPlayer.pause();
     }
 
-    public void stop() {
+    // stop playing recording and reset time to zero
+    public void stopPlayback() {
         mediaPlayer.pause();
         mediaPlayer.seekTo(0);
     }
 
-    public void rewind(int seconds) {
+    // rewind playing of recording by a certain number of seconds
+    public void rewindPlayback(int seconds) {
         int newTime = calcTime() - seconds*1000;
         if (newTime < 0) {
             newTime = 0;
@@ -163,7 +176,8 @@ public class MediaPlayerService extends Service implements AudioManager.OnAudioF
         setTime(newTime);
     }
 
-    public void fastForward(int seconds) {
+    // fast forward playing of recording by a certain number of seconds
+    public void fastForwardPlayback(int seconds) {
         int newTime = calcTime() + seconds*1000;
         if (newTime > duration) {
             newTime = duration;
@@ -171,8 +185,7 @@ public class MediaPlayerService extends Service implements AudioManager.OnAudioF
         setTime(newTime);
     }
 
-    //called by stopSelf
-
+    // onDestroy is called by stopSelf
     @Override
     public void onDestroy() {
         if (mediaPlayer != null) {
@@ -182,20 +195,21 @@ public class MediaPlayerService extends Service implements AudioManager.OnAudioF
         super.onDestroy();
     }
 
+    // the getService method of the MediaPlayerBinder returns the service to the actiivty class
     public class MediaPlayerBinder extends Binder {
         public MediaPlayerService getService() {
             return MediaPlayerService.this;
         }
     }
 
-    //called by the bindService method of an Activity.
-
+    // onBind is called by the bindService method of an Activity
     @Override
     public IBinder onBind(Intent intent) {
         //Return the communication channel to the service.
         return mediaPlayerBinder;
     }
 
+    // onAudioFocusChanges is called when a chance has occurred to the focus of the audio playback
     public void onAudioFocusChange(int focusChange) {
         switch (focusChange) {
             case AudioManager.AUDIOFOCUS_GAIN:

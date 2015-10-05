@@ -1,34 +1,47 @@
 package edu.nyu.scps.SpeechPlayer.Model;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
- * This class contains an ArrayList of speeches
+ * This class contains an HashMap of speeches, indexed by a HashCode of the name of the speaker and the name of the speech
  */
 public class SpeechList {
 
-    private ArrayList<Speech> list;
+    private HashMap<Integer, Speech> list;
 
-    // constructor should build a list of speeches to use in the app
+    // this constructor builds a hashmap of speeches to use in the app
     public SpeechList() {
-        list = new ArrayList<>();
+
+        // initialize speeches
+        Speech Gettysburg = new Speech("Gettysburg Address",
+                "Abraham Lincoln",
+                "http://fiftiesweb.com/usa/gettysburg-address-jd.mp3",
+                "https://en.m.wikipedia.org/wiki/Gettysburg_address",
+                1864);
+
+        Speech FDRPearlHabor = new Speech("Pearl Harbor Address to the Nation",
+                "Franklin Delano Roosevelt",
+                "http://americanrhetoric.com/mp3clips/politicalspeeches/fdrwarmessage344.mp3",
+                "https://en.m.wikipedia.org/wiki/Infamy_Speech",
+                1941);
 
         // add speeches
-        Speech Gettysburg = new Speech("Gettysburg Address","Abraham Lincoln","http://fiftiesweb.com/usa/gettysburg-address-jd.mp3","https://en.m.wikipedia.org/wiki/Gettysburg_address",1864);
-        list.add(Gettysburg);
+        list = new HashMap<>();
+        list.put(Gettysburg.hashCode(), Gettysburg);
+        list.put(FDRPearlHabor.hashCode(), FDRPearlHabor);
     }
 
     /**
-     * Return speech object marked index number
-     * @param i = index of speech to get
+     * Return speech object as indexes by name of speaker and title of speech
+     * @param orator = name of speaker
+     * @param title = title of speech
      * @return Speech object
      */
-    public Speech getSpeech(int i) {
+    public Speech getSpeech(String orator, String title) {
         try {
-            return list.get(i);
+            return list.get(Speech.getHashCode(orator, title));
         } catch (IndexOutOfBoundsException e) {
             return null;
         }
     }
-
 }

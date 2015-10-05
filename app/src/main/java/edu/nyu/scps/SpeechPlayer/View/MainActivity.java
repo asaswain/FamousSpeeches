@@ -13,7 +13,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Button;
@@ -149,11 +148,11 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 if (isMyServiceRunning()) {
                     if (pausePlayButton.getText() == "Pause") {
-                        mediaPlayerService.pause();
-                        pausePlayButton.setText("Play");
+                        mediaPlayerService.pausePlayback();
+                        pausePlayButton.setText(getResources().getString(R.string.play_button));
                     } else {
-                        mediaPlayerService.play();
-                        pausePlayButton.setText("Pause");
+                        mediaPlayerService.startPlayback();
+                        pausePlayButton.setText(getResources().getString(R.string.pause_button));
                     }
                 }
             }
@@ -165,8 +164,8 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if (isMyServiceRunning()) {
-                    pausePlayButton.setText("Play");
-                    mediaPlayerService.stop();
+                    pausePlayButton.setText(getResources().getString(R.string.play_button));
+                    mediaPlayerService.stopPlayback();
                 }
             }
         });
@@ -177,7 +176,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 if (isMyServiceRunning()) {
                     int timeInSeconds = 15;
-                    mediaPlayerService.rewind(timeInSeconds);
+                    mediaPlayerService.rewindPlayback(timeInSeconds);
                 }
             }
         });
@@ -188,7 +187,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 if (isMyServiceRunning()) {
                     int timeInSeconds = 15;
-                    mediaPlayerService.fastForward(timeInSeconds);
+                    mediaPlayerService.fastForwardPlayback(timeInSeconds);
                 }
             }
         });
@@ -254,7 +253,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void startPlaying() {
-        Speech mySpeech = mySpeechList.getSpeech(0);
+        Speech mySpeech = mySpeechList.getSpeech("Abraham Lincoln","Gettysburg Address");
 
         Intent intent = new Intent(this, MediaPlayerService.class);
         intent.putExtra("SpeechURL", mySpeech.getWebUrl());
@@ -293,8 +292,8 @@ public class MainActivity extends AppCompatActivity {
      */
     private void loadWikipediaPage(Speech mySpeech) {
         WebView webview = (WebView)findViewById(R.id.wikipediaPage);
-        WebSettings settings = webview.getSettings();
-        settings.setJavaScriptEnabled(true);
+        //WebSettings settings = webview.getSettings();
+        //settings.setJavaScriptEnabled(true);
         webview.setScrollBarStyle(WebView.SCROLLBARS_OUTSIDE_OVERLAY);
 
         //final AlertDialog alertDialog = new AlertDialog.Builder(this).create();
@@ -332,10 +331,10 @@ public class MainActivity extends AppCompatActivity {
             }
             */
         });
-        if (mySpeech.getWikipediaURL() != "") {
-            webview.loadUrl(mySpeech.getWikipediaURL());
-        } else {
+        if (mySpeech.getWikipediaURL().equals("")) {
             webview.loadUrl("about:blank");
+        } else {
+            webview.loadUrl(mySpeech.getWikipediaURL());
         }
     }
 }
