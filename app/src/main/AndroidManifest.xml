@@ -10,7 +10,7 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <activity
-            android:name="edu.nyu.scps.SpeechPlayer.View.MainActivity"
+            android:name=".View.MainActivity"
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -19,16 +19,22 @@
             </intent-filter>
         </activity>
 
+        <activity
+            android:name=".View.PlayerActivity"
+            android:label="@string/title_activity_player">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+            </intent-filter>
+        </activity>
+
         <service
-            android:name="edu.nyu.scps.SpeechPlayer.Controller.MediaPlayerService"
+            android:name=".Controller.MediaPlayerService"
             android:enabled="true"
-            android:exported="true">
-            <intent-filter
-                android:label="@string/start_service" >
-                <action android:name="edu.nyu.scps.binder.service.MY_SERVICE"/>
+            android:exported="true" >
+            <intent-filter android:label="@string/start_service" >
+                <action android:name="edu.nyu.scps.speechplayer.service.MY_SERVICE" />
             </intent-filter>
         </service>
-
     </application>
 
 </manifest>

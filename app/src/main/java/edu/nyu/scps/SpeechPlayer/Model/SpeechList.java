@@ -13,6 +13,7 @@ public class SpeechList {
     public SpeechList() {
 
         // initialize speeches
+
         Speech Gettysburg = new Speech("Gettysburg Address",
                 "Abraham Lincoln",
                 "http://fiftiesweb.com/usa/gettysburg-address-jd.mp3",
@@ -39,9 +40,18 @@ public class SpeechList {
      */
     public Speech getSpeech(String orator, String title) {
         try {
-            return list.get(Speech.getHashCode(orator, title));
+            Integer hash = Speech.getHashCode(orator,title);
+            return list.get(hash);
         } catch (IndexOutOfBoundsException e) {
             return null;
         }
+    }
+
+    /**
+     * Return HashMap object containing all the speeches
+     * @return HashMap containing all the speeches
+     */
+    public HashMap<Integer, Speech> getHashMap() {
+        return new HashMap<>(list);
     }
 }

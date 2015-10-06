@@ -28,6 +28,14 @@ public class Speech {
         this.year = other.year;
     }
 
+    public Speech(String title, String orator) {
+        this.title = title;
+        this.orator = orator;
+        this.webUrl = "";
+        this.wikipediaURL = "";
+        this.year = 0;
+    }
+
     public Speech(String title, String orator, String webUrl, String wikipediaURL, int year) {
         this.title = title;
         this.orator = orator;
@@ -96,11 +104,14 @@ public class Speech {
         return result;
     }
 
-    // this method is designed to allow a user to generat a hashcode with just a title and an orator,
+    // this method is designed to allow a user to generate a hashcode with just a title and an orator,
     // without having to create a new Speech object
-    public static int getHashCode(String title, String orator) {
-        int result = title.hashCode();
-        result = 31 * result + orator.hashCode();
-        return result;
+    public static int getHashCode(String orator,String title) {
+        int hash = 0;
+        if (orator != null && title != null) {
+            Speech dummySpeech = new Speech(title, orator);
+            hash = dummySpeech.hashCode();
+        }
+        return hash;
     }
 }
