@@ -71,8 +71,8 @@ public class PlayerActivity extends AppCompatActivity {
 
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
-            orator = extras.getString("orator");
-            title = extras.getString("title");
+            orator = extras.getString("oratorData");
+            title = extras.getString("titleData");
         }
 
         if (!isMyServiceRunning()) {
@@ -124,9 +124,11 @@ public class PlayerActivity extends AppCompatActivity {
         final Runnable myRunnable = new Runnable() {
             public void run() {
                 if (mediaPlayerService != null) {
+                    //update progress bar
                     Integer prog = (int) (mediaPlayerService.getProgress() * 100);
                     progressSeekBar.setProgress(prog);
 
+                    // update time elapsed view
                     int millis = mediaPlayerService.getTime();
                     String time = String.format("%02d:%02d",
                             TimeUnit.MILLISECONDS.toMinutes(millis),
@@ -134,6 +136,14 @@ public class PlayerActivity extends AppCompatActivity {
                     );
 
                     progressTextView.setText("Time Elapsed: " + time);
+
+                    // change pause/play button text based on if music is playing
+                    final Button pausePlayButton = (Button) findViewById(R.id.pausePlayButton);
+                    if (mediaPlayerService.isSpeechPlaying()) {
+                        pausePlayButton.setText(getResources().getString(R.string.pause_button));
+                    } else {
+                        pausePlayButton.setText(getResources().getString(R.string.play_button));
+                    }
                 }
             }
         };
@@ -155,12 +165,10 @@ public class PlayerActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if (isMyServiceRunning()) {
-                    if (pausePlayButton.getText() == "Pause") {
+                    if (mediaPlayerService.isSpeechPlaying()) {
                         mediaPlayerService.pausePlayback();
-                        pausePlayButton.setText(getResources().getString(R.string.play_button));
                     } else {
                         mediaPlayerService.startPlayback();
-                        pausePlayButton.setText(getResources().getString(R.string.pause_button));
                     }
                 }
             }

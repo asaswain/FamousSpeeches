@@ -25,6 +25,7 @@ public class MediaPlayerService extends Service implements AudioManager.OnAudioF
     private int duration = 0;
     private MediaPlayerBinder mediaPlayerBinder = new MediaPlayerBinder();
     boolean durationSaved = false;
+    boolean isPlaying = false;
 
     public MediaPlayerService() {
     }
@@ -42,9 +43,12 @@ public class MediaPlayerService extends Service implements AudioManager.OnAudioF
 
         // read webpage address of speech mp3 file from Intent object
         String speechURL = (String) intent.getExtras().get("SpeechURL");
+        //Uri speechURL = Uri.parse("android.resource://" + getPackageName() + "/" + R.raw.musette);
+
         if (speechURL != null) {
             try {
                 mediaPlayer.setDataSource(speechURL);
+                //mediaPlayer.setDataSource(this,speechURL);
             } catch (IOException iOException) {
                 Toast toast = Toast.makeText(MediaPlayerService.this, iOException.toString(), Toast.LENGTH_LONG);
                 toast.show();
@@ -53,6 +57,7 @@ public class MediaPlayerService extends Service implements AudioManager.OnAudioF
             mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
                 @Override
                 public void onCompletion(MediaPlayer mediaPlayer) {
+                    isPlaying = false;
                     MediaPlayerService.this.stopSelf();  //calls onDestroy, below
                 }
             });
@@ -99,7 +104,10 @@ public class MediaPlayerService extends Service implements AudioManager.OnAudioF
     public void setTime(int newTime) {
         mediaPlayer.pause();
         mediaPlayer.seekTo(newTime);
-        startPlayback();
+        // if currently playing speech, continue playback after setting time
+        if (isSpeechPlaying()) {
+            startPlayback();
+        }
     }
 
     // get duration (in milliseconds) of the recording
@@ -107,7 +115,7 @@ public class MediaPlayerService extends Service implements AudioManager.OnAudioF
         return duration;
     }
 
-    // set the duration of the
+    // set the duration of the recording
     private void setDuration(int duration) {
         if (duration > 0) {
             this.duration = duration;
@@ -150,15 +158,18 @@ public class MediaPlayerService extends Service implements AudioManager.OnAudioF
         int result = audioManager.requestAudioFocus(this, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN);
         if (result == AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
             mediaPlayer.start();
+            isPlaying = true;
         } else {
             Toast toast = Toast.makeText(MediaPlayerService.this, "app denied access to start playing speech", Toast.LENGTH_LONG);
             toast.show();
+            isPlaying = false;
         }
     }
 
     // pause playing records
     public void pausePlayback() {
         mediaPlayer.pause();
+        isPlaying = false;
     }
 
     // stop playing recording and reset time to zero
@@ -252,5 +263,9 @@ public class MediaPlayerService extends Service implements AudioManager.OnAudioF
             default:
                 break;
         }
+    }
+
+    public boolean isSpeechPlaying() {
+        return isPlaying;
     }
 }

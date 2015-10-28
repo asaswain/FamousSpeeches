@@ -4,6 +4,8 @@
 
     <!-- Speech List -->
 
+    <string name="list_title">Famous Speeches</string>
+    <string name="instructions">Select a recording to play:</string>
     <string name="message_empty">The table has no records.</string>
 
     <!-- Speech Player -->
@@ -24,4 +26,10 @@
     <string name="loading_title">Loading Wikipedia Page For Speech</string>
     <string name="loading_message">Please Wait</string>
     <string name="title_activity_player">PlayerActivity</string>
+
+    <!-- Speeches SQL Table -->
+    <string name="sql_table_name">speeches</string>
+    <string name="sql_title_column">title</string>
+    <string name="sql_orator_column">orator</string>
+    <string name="sql_year_column">year</string>
 </resources>

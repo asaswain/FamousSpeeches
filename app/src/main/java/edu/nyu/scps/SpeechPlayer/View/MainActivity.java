@@ -11,10 +11,9 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
-import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
 
-import edu.nyu.scps.SpeechPlayer.Controller.SpeechHelper;
+import edu.nyu.scps.SpeechPlayer.Controller.SpeechSQLHelper;
 import edu.nyu.scps.SpeechPlayer.R;
 
 /**
@@ -23,30 +22,34 @@ import edu.nyu.scps.SpeechPlayer.R;
 
 public class MainActivity extends AppCompatActivity {
     private String databaseName = "speechdata.db";
-    private SpeechHelper helper;   //Can't initialize this field before onCreate.
+    private SpeechSQLHelper helper;   //Can't initialize this field before onCreate.
     private SQLiteDatabase db;
-    private SimpleCursorAdapter adapter;
+
+    private SpeechAdapter adapter;
+    // old code
+    //private SimpleCursorAdapter adapter;
+    private ListView listView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        final ListView listView = (ListView) findViewById(R.id.listView);
+        listView = (ListView) findViewById(R.id.listView);
         TextView textView = (TextView)findViewById(R.id.empty);
         listView.setEmptyView(textView);   //Display this TextView when table contains no records.
 
-        adapter = new SimpleCursorAdapter(
+        // old code
+        /*adapter = new SimpleCursorAdapter(
                 this,
                 android.R.layout.simple_list_item_2,
                 null,
                 new String[] {"orator",             "title"},
                 new int[]    {android.R.id.text1, android.R.id.text2},
                 0    //don't need any flags
-        );
-        listView.setAdapter(adapter);
+        );*/
 
-        helper = new SpeechHelper(this, databaseName);
+        helper = new SpeechSQLHelper(this, databaseName);
         CreateTask createTask = new CreateTask();
         createTask.execute();
 
@@ -54,12 +57,12 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onItemClick(final AdapterView<?> parent, View view, final int position, final long id) {
                 Cursor cursor = (Cursor) parent.getItemAtPosition(position); //downcast
-                int oratorIndex = cursor.getColumnIndex("orator");
-                int titleIndex = cursor.getColumnIndex("title");
+                int oratorIndex = cursor.getColumnIndex(getResources().getString(R.string.sql_orator_column));
+                int titleIndex = cursor.getColumnIndex(getResources().getString(R.string.sql_title_column));
 
                 Intent intent = new Intent(getBaseContext(), PlayerActivity.class);
-                intent.putExtra("orator", cursor.getString(oratorIndex));
-                intent.putExtra("title", cursor.getString(titleIndex));
+                intent.putExtra("oratorData", cursor.getString(oratorIndex));
+                intent.putExtra("titleData", cursor.getString(titleIndex));
                 startActivity(intent);
             }
         });
@@ -75,7 +78,8 @@ public class MainActivity extends AppCompatActivity {
         protected void onPostExecute(SQLiteDatabase db) {
             MainActivity.this.db = db;
             Cursor cursor = helper.getCursor();
-            //Cursor cursor = db.query(tableName, columns, null, null, null, null, null);
+            adapter = new SpeechAdapter(MainActivity.this, cursor, 0);
+            listView.setAdapter(adapter);
             adapter.swapCursor(cursor);
         }
     }
