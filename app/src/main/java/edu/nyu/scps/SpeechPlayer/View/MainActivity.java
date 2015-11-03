@@ -29,6 +29,7 @@ public class MainActivity extends AppCompatActivity {
     // old code
     //private SimpleCursorAdapter adapter;
     private ListView listView;
+    private String sortType = "Orator";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,9 +51,9 @@ public class MainActivity extends AppCompatActivity {
         );*/
 
         helper = new SpeechSQLHelper(this, databaseName);
-        CreateTask createTask = new CreateTask();
-        createTask.execute();
+        buildSpeechTable();
 
+        // set listener for ListView to go to the PlayerActivity screen
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(final AdapterView<?> parent, View view, final int position, final long id) {
@@ -66,6 +67,34 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+
+        // set listeners for table column headings to allow user to change sort order
+        int[] columnHeadingsIds = {R.id.titleColumnHeading, R.id.oratorColumnHeading, R.id.yearColumnHeading};
+
+        for (int id : columnHeadingsIds) {
+            TextView colHeading = (TextView)findViewById(id);
+            colHeading.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    TextView textView = (TextView) view;
+                    String newSortType = textView.getText().toString();
+                    if (newSortType.equals("Title") || newSortType.equals("Orator") || newSortType.equals("Year")) {
+                        sortType = newSortType;
+                        buildSpeechTable();
+                    } else {
+                        // invalid sort type, do nothing
+                    }
+                }
+            });
+        }
+    }
+
+    /**
+     * Build a speech table from an SQL database (sorting by sortOrder column name)
+     */
+    private void buildSpeechTable() {
+        CreateTask createTask = new CreateTask();
+        createTask.execute();
     }
 
     private class CreateTask extends AsyncTask<Void, Void, SQLiteDatabase> {
@@ -77,7 +106,7 @@ public class MainActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(SQLiteDatabase db) {
             MainActivity.this.db = db;
-            Cursor cursor = helper.getCursor();
+            Cursor cursor = helper.getCursor(sortType);
             adapter = new SpeechAdapter(MainActivity.this, cursor, 0);
             listView.setAdapter(adapter);
             adapter.swapCursor(cursor);
@@ -105,6 +134,4 @@ public class MainActivity extends AppCompatActivity {
 
         return super.onOptionsItemSelected(item);
     }
-
-
 }

@@ -20,6 +20,8 @@ import edu.nyu.scps.SpeechPlayer.R;
 
 public class SpeechSQLHelper extends SQLiteOpenHelper {
     private Context context;
+
+    // list of each column name in the SQL table
     private final String speechTableName;
     private final String oratorColName;
     private final String titleColName;
@@ -71,14 +73,30 @@ public class SpeechSQLHelper extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-
     }
 
-    public Cursor getCursor() {
+    /**
+     * Execute SQL select statement to select data for cursor
+     * @param sortType String to indicate what item to sort by, either Title, Orator, or Year
+     * @return cursor object
+     */
+    public Cursor getCursor(String sortType) {
         SQLiteDatabase db = getReadableDatabase();
         //can say "_id, name" instead of "*", but _id must be included.
-        String sqlQuery = "SELECT _id, " + oratorColName + ", " + titleColName + ", " + yearColName;
-        sqlQuery += " FROM " + speechTableName + " ORDER BY " + oratorColName;
+        String sqlQuery = "SELECT _id, " + oratorColName + ", " + titleColName + ", " + yearColName + " FROM " + speechTableName;
+
+        switch (sortType) {
+            case "Title":
+                sqlQuery += " ORDER BY " + titleColName;
+                break;
+            case "Orator":
+                sqlQuery += " ORDER BY " + oratorColName;
+                break;
+            default:
+                sqlQuery += " ORDER BY " + yearColName;
+                break;
+        }
+
         Cursor cursor = db.rawQuery(sqlQuery, null);
         cursor.moveToFirst();
         return cursor;

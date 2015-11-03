@@ -18,7 +18,7 @@ public class SpeechList {
                 "Abraham Lincoln",
                 "http://fiftiesweb.com/usa/gettysburg-address-jd.mp3",
                 "https://en.m.wikipedia.org/wiki/Gettysburg_address",
-                1864);
+                1964);
 
         Speech FDRPearlHabor = new Speech("Pearl Harbor Address to the Nation",
                 "Franklin Delano Roosevelt",

@@ -6,6 +6,11 @@
 
     <string name="list_title">Famous Speeches</string>
     <string name="instructions">Select a recording to play:</string>
+
+    <string name="title_col_hdr">Title</string>
+    <string name="orator_col_hdr">Orator</string>
+    <string name="year_col_hdr">Year</string>
+
     <string name="message_empty">The table has no records.</string>
 
     <!-- Speech Player -->
