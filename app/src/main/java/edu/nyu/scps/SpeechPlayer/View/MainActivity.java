@@ -10,8 +10,10 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import edu.nyu.scps.SpeechPlayer.Controller.SpeechSQLHelper;
 import edu.nyu.scps.SpeechPlayer.R;
@@ -87,6 +89,15 @@ public class MainActivity extends AppCompatActivity {
                 }
             });
         }
+
+        // set listener for help button
+        Button helpButton = (Button) findViewById(R.id.helpButton);
+        helpButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Toast.makeText(getApplicationContext(),R.string.help_text, Toast.LENGTH_LONG).show();
+            }
+        });
     }
 
     /**

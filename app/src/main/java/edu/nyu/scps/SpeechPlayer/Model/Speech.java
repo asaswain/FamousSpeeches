@@ -6,15 +6,15 @@ package edu.nyu.scps.SpeechPlayer.Model;
 public class Speech {
 
     private String title;
-    private String orator;
-    private String webUrl;
+    private Orator orator;
+    private String webRecordingURL;
     private String wikipediaURL;
     int year;
 
     public Speech() {
         this.title = "";
-        this.orator = "";
-        this.webUrl = "";
+        this.orator = null;
+        this.webRecordingURL = "";
         this.wikipediaURL = "";
         this.year = 0;
     }
@@ -23,23 +23,23 @@ public class Speech {
     public Speech(Speech other) {
         this.title = other.title;
         this.orator = other.orator;
-        this.webUrl = other.webUrl;
+        this.webRecordingURL = other.webRecordingURL;
         this.wikipediaURL = other.wikipediaURL;
         this.year = other.year;
     }
 
-    public Speech(String title, String orator) {
+    public Speech(String title, Orator orator) {
         this.title = title;
         this.orator = orator;
-        this.webUrl = "";
+        this.webRecordingURL = "";
         this.wikipediaURL = "";
         this.year = 0;
     }
 
-    public Speech(String title, String orator, String webUrl, String wikipediaURL, int year) {
+    public Speech(String title, Orator orator, String webUrl, String wikipediaURL, int year) {
         this.title = title;
         this.orator = orator;
-        this.webUrl = webUrl;
+        this.webRecordingURL = webUrl;
         this.wikipediaURL = wikipediaURL;
         this.year = year;
     }
@@ -52,20 +52,28 @@ public class Speech {
         this.title = title;
     }
 
-    public String getOrator() {
-        return orator;
+    public Orator getOrator() {
+        return new Orator(orator);
     }
 
-    public void setOrator(String orator) {
-        this.orator = orator;
+    public void setOrator(Orator orator) {
+        this.orator = new Orator(orator);
     }
 
-    public String getWebUrl() {
-        return webUrl;
+    public String getPortraitURL() {
+        return orator.getPortraitURL();
     }
 
-    public void setWebUrl(String webUrl) {
-        this.webUrl = webUrl;
+    public void setPortraitURL(String portraitURL) {
+        this.orator.setPortraitURL(portraitURL);
+    }
+
+    public String getWebRecordingURL() {
+        return webRecordingURL;
+    }
+
+    public void setWebRecordingURL(String webRecordingURL) {
+        this.webRecordingURL = webRecordingURL;
     }
 
     public int getYear() {
@@ -106,7 +114,7 @@ public class Speech {
 
     // this method is designed to allow a user to generate a hashcode with just a title and an orator,
     // without having to create a new Speech object
-    public static int getHashCode(String orator,String title) {
+    public static int getHashCode(Orator orator, String title) {
         int hash = 0;
         if (orator != null && title != null) {
             Speech dummySpeech = new Speech(title, orator);
@@ -114,4 +122,5 @@ public class Speech {
         }
         return hash;
     }
+
 }

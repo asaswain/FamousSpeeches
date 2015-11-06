@@ -77,7 +77,8 @@
             android:layout_marginBottom="5dp"/>
 
         <Button
-            android:text="Help"
+            android:id="@+id/helpButton"
+            android:text="@string/help_button"
             android:layout_width="100dp"
             android:layout_height="wrap_content" />
 

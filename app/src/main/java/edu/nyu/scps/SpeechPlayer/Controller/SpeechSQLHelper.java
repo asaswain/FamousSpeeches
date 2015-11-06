@@ -59,10 +59,8 @@ public class SpeechSQLHelper extends SQLiteOpenHelper {
         for (HashMap.Entry<Integer, Speech> entry : speechMap.entrySet()) {
             //System.out.println("Key = " + entry.getKey() + ", Value = " + entry.getValue());
             Speech tmpSpeech =  entry.getValue();
-            String x = tmpSpeech.getOrator();
-            String y = tmpSpeech.getTitle();
             ContentValues contentValues = new ContentValues();
-            contentValues.put(oratorColName, tmpSpeech.getOrator());
+            contentValues.put(oratorColName, tmpSpeech.getOrator().getFullName());
             contentValues.put(titleColName, tmpSpeech.getTitle());
             contentValues.put(yearColName, tmpSpeech.getYear());
             if (db.insert(speechTableName, null, contentValues) <= 0) {
