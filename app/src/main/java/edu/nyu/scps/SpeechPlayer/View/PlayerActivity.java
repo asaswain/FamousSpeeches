@@ -29,6 +29,7 @@ import java.util.TimerTask;
 import java.util.concurrent.TimeUnit;
 
 import edu.nyu.scps.SpeechPlayer.Controller.MediaPlayerService;
+import edu.nyu.scps.SpeechPlayer.Model.CurrentlyPlaying;
 import edu.nyu.scps.SpeechPlayer.Model.Speech;
 import edu.nyu.scps.SpeechPlayer.Model.SpeechList;
 import edu.nyu.scps.SpeechPlayer.R;
@@ -48,7 +49,6 @@ public class PlayerActivity extends AppCompatActivity {
 
     // speech record current loaded
     private Speech mySpeech;
-    private boolean isWikipediaPageVisible = false;
 
     private ServiceConnection serviceConnection = new ServiceConnection() {
         @Override
@@ -73,13 +73,31 @@ public class PlayerActivity extends AppCompatActivity {
         setContentView(R.layout.activity_player);
 
         Bundle extras = getIntent().getExtras();
-        if (extras != null) {
+        if (extras.getString("oratorData") != null) {
             orator = extras.getString("oratorData");
+        }
+        if (extras.getString("titleData") != null) {
             title = extras.getString("titleData");
         }
 
-        if (!isMyServiceRunning()) {
-            startPlaying();
+        SpeechList mySpeechList = new SpeechList(this);
+        mySpeech = mySpeechList.getSpeech(orator, title);
+
+        if (mySpeech != null) {
+            Speech currentSpeech = CurrentlyPlaying.getCurrentlyPlayingSpeech();
+            if (currentSpeech == null || !currentSpeech.equals(mySpeech)) {
+                // check if we need to kill old speech
+                if (CurrentlyPlaying.getCurrentlyPlayingService() != null && isMyServiceRunning()) {
+                    CurrentlyPlaying.getCurrentlyPlayingService().kill();
+                }
+                // start playing new speech
+                startPlaying();
+                CurrentlyPlaying.setCurrentlyPlayingSpeech(mySpeech);
+            }
+
+            // load title and portrait for speech
+            loadSpeechTitle(mySpeech);
+            loadPortrait(mySpeech);
         }
 
         volumeSeekBar = (SeekBar)findViewById(R.id.volumeSeekBar);
@@ -108,7 +126,7 @@ public class PlayerActivity extends AppCompatActivity {
         progressSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                if (mediaPlayerService != null && fromUser) {
+                if (fromUser && mediaPlayerService != null && isMyServiceRunning()) {
                     int musicDuration = mediaPlayerService.getDuration();
                     int musicTime = Math.round((progress / (float) seekBar.getMax()) * musicDuration);
                     mediaPlayerService.setTime(musicTime);
@@ -147,6 +165,8 @@ public class PlayerActivity extends AppCompatActivity {
                     } else {
                         pausePlayButton.setText(getResources().getString(R.string.play_button));
                     }
+
+                    CurrentlyPlaying.setCurrentlyPlayingService(mediaPlayerService);
                 }
             }
         };
@@ -163,27 +183,20 @@ public class PlayerActivity extends AppCompatActivity {
 
         // button click listeners
 
-        // hide/show wikipedia page for speech
+        // display wikipedia screen button
         final Button wikipediaButton = (Button) findViewById(R.id.wikipediaButton);
         wikipediaButton.setOnClickListener(new Button.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Button wikipediaButton = (Button) v;
-                int newButtonText;
-                if (!isWikipediaPageVisible) {
-                    loadWikipediaPage(mySpeech);
-                    isWikipediaPageVisible = true;
-                    newButtonText = R.string.hide_wikipedia;
-                } else {
-                    hideWikipediaPage();
-                    isWikipediaPageVisible = false;
-                    newButtonText = R.string.show_wikipedia;
-                }
-                wikipediaButton.setText(newButtonText);
+
+                Intent intent = new Intent(getBaseContext(), WikipediaActivity.class);
+                intent.putExtra("wikipediaURL", mySpeech.getWikipediaURL());
+                startActivity(intent);
             }
         });
 
-        // recording playback controls
+        // recording playback control buttons
         final Button pausePlayButton = (Button) findViewById(R.id.pausePlayButton);
         pausePlayButton.setOnClickListener(new Button.OnClickListener() {
             @Override
@@ -293,15 +306,12 @@ public class PlayerActivity extends AppCompatActivity {
     }
 
     private void startPlaying() {
-        SpeechList mySpeechList = new SpeechList();
+        SpeechList mySpeechList = new SpeechList(this);
         mySpeech = mySpeechList.getSpeech(orator, title);
         if (mySpeech != null){
             Intent intent = new Intent(this, MediaPlayerService.class);
             intent.putExtra("SpeechURL", mySpeech.getWebRecordingURL());
             ComponentName componentName = startService(intent); //calls onStartCommand
-
-            loadSpeechTitle(mySpeech);
-            loadPortrait(mySpeech);
 
             if (componentName == null) {
                 Toast toast = Toast.makeText(this, "could not start Service "
@@ -362,85 +372,12 @@ public class PlayerActivity extends AppCompatActivity {
      * @param mySpeech - speech to load portrait URL for
      */
     private void loadPortrait(Speech mySpeech) {
-
         if (mySpeech.getPortraitURL().equals("")) {
             new DownloadImageTask((ImageView) findViewById(R.id.portrait)).execute("");
         } else {
             String s = mySpeech.getPortraitURL();
             new DownloadImageTask((ImageView) findViewById(R.id.portrait)).execute(s);
         }
-
-        /*
-        WebView webView = (WebView)findViewById(R.id.portrait);
-        //WebSettings settings = webview.getSettings();
-        //settings.setJavaScriptEnabled(true);
-        //webView.setScrollBarStyle(WebView.SCROLLBARS_OUTSIDE_OVERLAY);
-
-        //final AlertDialog alertDialog = new AlertDialog.Builder(this).create();
-        String loadingTitle = getResources().getString(R.string.portrait_loading_title);
-        String loadingMessage = getResources().getString(R.string.loading_message);
-        final ProgressDialog progressBar = ProgressDialog.show(PlayerActivity.this, loadingTitle, loadingMessage);
-
-        webView.setWebViewClient(new WebViewClient() {
-            public boolean shouldOverrideUrlLoading(WebView view, String url) {
-                //Log.i("Webview", "Loading Wikipedia Page For Speech");
-                view.loadUrl(url);
-                return true;
-            }
-
-            public void onPageFinished(WebView view, String url) {
-                //Log.i("Webview", "Finished Loading Page");
-                if (progressBar.isShowing()) {
-                    progressBar.dismiss();
-                }
-            }
-        });
-        if (mySpeech.getPortraitURL().equals("")) {
-            webView.loadUrl("about:blank");
-        } else {
-            String s = mySpeech.getPortraitURL();
-            webView.loadUrl(s);
-        }
-        */
-    }
-
-    /**
-     * Load webview with Wikipedia page URL for speech
-     * @param mySpeech - speech to load wikipedia URL for
-     */
-    private void loadWikipediaPage(Speech mySpeech) {
-       /*
-        WebView webView = (WebView)findViewById(R.id.wikipediaPage);
-        //WebSettings settings = webview.getSettings();
-        //settings.setJavaScriptEnabled(true);
-        webView.setScrollBarStyle(WebView.SCROLLBARS_OUTSIDE_OVERLAY);
-
-        //final AlertDialog alertDialog = new AlertDialog.Builder(this).create();
-        String loadingTitle = getResources().getString(R.string.loading_wikipedia_title);
-        String loadingMessage = getResources().getString(R.string.loading_message);
-        final ProgressDialog progressBar = ProgressDialog.show(PlayerActivity.this, loadingTitle, loadingMessage);
-
-        webView.setWebViewClient(new WebViewClient() {
-            public boolean shouldOverrideUrlLoading(WebView view, String url) {
-                //Log.i("Webview", "Loading Wikipedia Page For Speech");
-                view.loadUrl(url);
-                return true;
-            }
-
-            public void onPageFinished(WebView view, String url) {
-                //Log.i("Webview", "Finished Loading Page");
-                if (progressBar.isShowing()) {
-                    progressBar.dismiss();
-                }
-            }
-        });
-        if (mySpeech.getWikipediaURL().equals("")) {
-            webView.loadUrl("about:blank");
-        } else {
-            String s = mySpeech.getWikipediaURL();
-            webView.loadUrl(s);
-        }
-        */
     }
 
     private void hideWikipediaPage() {

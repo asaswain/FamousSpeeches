@@ -138,7 +138,7 @@ public class MediaPlayerService extends Service implements AudioManager.OnAudioF
     // and then calculate percnetage if the records that has been played using the time and the duration
     private double calcProgress() {
         double progress = 0;
-        if (mediaPlayer != null) {
+        if (mediaPlayer != null && isPlaying) {
             // initialize duration of recording only once
             if (!durationSaved) {
                 int duration = mediaPlayer.getDuration();
@@ -174,7 +174,7 @@ public class MediaPlayerService extends Service implements AudioManager.OnAudioF
 
     // stop playing recording and reset time to zero
     public void stopPlayback() {
-        mediaPlayer.pause();
+        pausePlayback();
         mediaPlayer.seekTo(0);
     }
 
@@ -267,5 +267,10 @@ public class MediaPlayerService extends Service implements AudioManager.OnAudioF
 
     public boolean isSpeechPlaying() {
         return isPlaying;
+    }
+
+    // end and kill current playback
+    public void kill() {
+        MediaPlayerService.this.stopSelf();  //calls onDestroy method
     }
 }

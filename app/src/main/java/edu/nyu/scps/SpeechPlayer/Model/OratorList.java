@@ -1,39 +1,56 @@
 package edu.nyu.scps.SpeechPlayer.Model;
 
+import android.content.Context;
+
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.HashMap;
-import java.util.LinkedList;
+
+import edu.nyu.scps.SpeechPlayer.R;
 
 /**
  * A list of orators to use when building speeches
  */
 public class OratorList {
 
-    private HashMap<Integer, Orator> portraitList;
+    private HashMap<Integer, Orator> oratorList;
 
-    public OratorList() {
-        LinkedList<Orator> tmpList = new LinkedList<>();
+    public OratorList(Context context) {
 
-        // initialize portraits
+        oratorList = new HashMap<>();
 
-        tmpList.add(new Orator("Franklin Delano Roosevelt",
-                "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b8/FDR_in_1933.jpg/1024px-FDR_in_1933.jpg"));
+        // read data from file
+        try
+        {
+            InputStream inputStream = context.getResources().openRawResource(R.raw.orator_data);
+            BufferedReader inBuffer = new BufferedReader(new InputStreamReader(inputStream));
 
-        tmpList.add(new Orator("Richard Milhous Nixon",
-                "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4c/Richard_M._Nixon%2C_head-and-shoulders_portrait%2C_facing_front.tif/lossy-page1-1024px-Richard_M._Nixon%2C_head-and-shoulders_portrait%2C_facing_front.tif.jpg"));
-
-        tmpList.add(new Orator("John Fitzgerald Kennedy",
-                "https://upload.wikimedia.org/wikipedia/commons/5/5e/John_F._Kennedy%2C_White_House_photo_portrait%2C_looking_up.jpg"));
-
-        tmpList.add(new Orator("Abraham Lincoln",
-                "https://upload.wikimedia.org/wikipedia/commons/thumb/4/44/Abraham_Lincoln_head_on_shoulders_photo_portrait.jpg/1024px-Abraham_Lincoln_head_on_shoulders_photo_portrait.jpg"));
-
-        tmpList.add(new Orator("Douglas MacArthur",
-                "https://upload.wikimedia.org/wikipedia/commons/thumb/8/89/DouglasMacArthur1945.jpg/1024px-DouglasMacArthur1945.jpg"));
-
-        // add portraits
-        portraitList = new HashMap<>();
-        for(Orator newPortrait : tmpList) {
-            portraitList.put(newPortrait.hashCode(), newPortrait);
+            while(true) {
+                String input = inBuffer.readLine();        //read a line
+                if (input == null) {              //if input is null  end of file
+                    break;
+                } else {
+                    // create orator object
+                    String tokenArray[] = input.split(",");
+                    String name = tokenArray[0];
+                    String imageURL = tokenArray[1];
+                    Orator tmpOrator = new Orator(name, imageURL);
+                    // add to list
+                    oratorList.put(tmpOrator.hashCode(), tmpOrator);
+                }
+            }
+            inBuffer.close( );
+        }
+        catch (FileNotFoundException e)			//catch if input file does not exist
+        {
+            // do nothing
+        }
+        catch (IOException e)					//catch all other I/O exceptions
+        {
+            // do nothing
         }
     }
 
@@ -45,7 +62,7 @@ public class OratorList {
     public Orator getOrator(String orator) {
         try {
             Integer hash = Orator.getHashCode(orator);
-            return portraitList.get(hash);
+            return oratorList.get(hash);
         } catch (IndexOutOfBoundsException e) {
             return null;
         }

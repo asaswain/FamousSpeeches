@@ -1,7 +1,15 @@
 package edu.nyu.scps.SpeechPlayer.Model;
 
+import android.content.Context;
+
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.HashMap;
-import java.util.LinkedList;
+
+import edu.nyu.scps.SpeechPlayer.R;
 
 /**
  * This class contains an HashMap of speeches, indexed by a HashCode of the name of the speaker and the name of the speech
@@ -12,48 +20,44 @@ public class SpeechList {
     private OratorList oratorList;
 
     // this constructor builds a hashmap of speeches to use in the app
-    public SpeechList() {
+    public SpeechList(Context context) {
 
-        oratorList = new OratorList();
-
-        LinkedList<Speech> tmpList = new LinkedList<>();
-
-        // initialize speeches
-
-        tmpList.add(new Speech("Pearl Harbor Address to the Nation",
-                oratorList.getOrator("Franklin Delano Roosevelt"),
-                "http://americanrhetoric.com/mp3clips/politicalspeeches/fdrwarmessage344.mp3",
-                "https://en.m.wikipedia.org/wiki/Infamy_Speech",
-                1941));
-
-        tmpList.add(new Speech ("Farewell Address to Congress",
-                oratorList.getOrator("Douglas MacArthur"),
-                "http://www.americanrhetoric.com/mp3clips/politicalspeeches/douglasmacarthurfarewell34323.mp3",
-                "https://en.wikisource.org/wiki/MacArthur%27s_Farewell_Speech_to_Congress",
-                1951));
-
-        tmpList.add(new Speech("Checkers",
-                oratorList.getOrator("Richard Milhous Nixon"),
-                "http://web2.millercenter.org/speeches/audio/spe_1952_0923_nixon.mp3",
-                "https://en.wikipedia.org/wiki/Checkers_speech",
-                1952));
-
-        tmpList.add(new Speech("Ich Bin Ein Berliner",
-                oratorList.getOrator("John Fitzgerald Kennedy"),
-                "http://www.americanrhetoric.com/mp3clips/politicalspeeches/jfkberlinaddress14444444iiiiii4444444444444.mp3",
-                "https://en.wikipedia.org/wiki/Ich_bin_ein_Berliner",
-                1963));
-
-        tmpList.add(new Speech("Gettysburg Address",
-                oratorList.getOrator("Abraham Lincoln"),
-                "http://fiftiesweb.com/usa/gettysburg-address-jd.mp3",
-                "https://en.m.wikipedia.org/wiki/Gettysburg_address",
-                1964));
-
-        // add speeches
         speechList = new HashMap<>();
-        for(Speech newSpeech : tmpList) {
-            speechList.put(newSpeech.hashCode(), newSpeech);
+        oratorList = new OratorList(context);
+
+        // read data from file
+        try
+        {
+            InputStream inputStream = context.getResources().openRawResource(R.raw.speech_data);
+            BufferedReader inBuffer = new BufferedReader(new InputStreamReader(inputStream));
+
+            while(true) {
+                String input = inBuffer.readLine();        //read a line
+                if (input == null) {              //if input is null  end of file
+                    break;
+                } else {
+                    // create speech object
+                    String tokenArray[] = input.split(",");
+                    String title = tokenArray[0];
+                    String oratorName = tokenArray[1];
+                    Orator orator = oratorList.getOrator(oratorName);
+                    String webRecordingURL = tokenArray[2];
+                    String wikipediaURL = tokenArray[3];
+                    Integer year = Integer.valueOf(tokenArray[4]);
+                    Speech tmpSpeech = new Speech(title, orator, webRecordingURL, wikipediaURL, year);
+                    // add to list
+                    speechList.put(tmpSpeech.hashCode(), tmpSpeech);
+                }
+            }
+            inBuffer.close( );
+        }
+        catch (FileNotFoundException e)			//catch if input file does not exist
+        {
+            // do nothing
+        }
+        catch (IOException e)					//catch all other I/O exceptions
+        {
+            // do nothing
         }
     }
 

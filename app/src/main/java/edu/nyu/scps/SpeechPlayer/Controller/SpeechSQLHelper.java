@@ -29,6 +29,7 @@ public class SpeechSQLHelper extends SQLiteOpenHelper {
 
     public SpeechSQLHelper(Context context, String name) {
         super(context, name, null, 1);
+        this.context = context;
         speechTableName = context.getResources().getString(R.string.sql_table_name);
         oratorColName = context.getResources().getString(R.string.sql_orator_column);
         titleColName = context.getResources().getString(R.string.sql_title_column);
@@ -52,7 +53,7 @@ public class SpeechSQLHelper extends SQLiteOpenHelper {
 
         // build a new SpeechList object which creates a HashMap of all speeches
         SpeechList sqlSpeechList;
-        sqlSpeechList = new SpeechList();
+        sqlSpeechList = new SpeechList(context);
 
         // loop through each entry in HashMap and build SQL database
         HashMap<Integer, Speech> speechMap = sqlSpeechList.getHashMap();
