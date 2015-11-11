@@ -342,10 +342,23 @@ public class PlayerActivity extends AppCompatActivity {
         textview.setText(mySpeech.getTitle());
     }
 
-    private class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
+    /**
+     * Load webview with portrait of orator of speech
+     * @param mySpeech - speech to load portrait URL for
+     */
+    private void loadPortrait(Speech mySpeech) {
+        if (mySpeech.getPortraitURL().equals("")) {
+            new DownloadPortraitTask((ImageView) findViewById(R.id.portrait)).execute("");
+        } else {
+            String s = mySpeech.getPortraitURL();
+            new DownloadPortraitTask((ImageView) findViewById(R.id.portrait)).execute(s);
+        }
+    }
+
+    private class DownloadPortraitTask extends AsyncTask<String, Void, Bitmap> {
         ImageView bmImage;
 
-        public DownloadImageTask(ImageView bmImage) {
+        public DownloadPortraitTask(ImageView bmImage) {
             this.bmImage = bmImage;
         }
 
@@ -367,18 +380,7 @@ public class PlayerActivity extends AppCompatActivity {
         }
     }
 
-    /**
-     * Load webview with portrait of orator of speech
-     * @param mySpeech - speech to load portrait URL for
-     */
-    private void loadPortrait(Speech mySpeech) {
-        if (mySpeech.getPortraitURL().equals("")) {
-            new DownloadImageTask((ImageView) findViewById(R.id.portrait)).execute("");
-        } else {
-            String s = mySpeech.getPortraitURL();
-            new DownloadImageTask((ImageView) findViewById(R.id.portrait)).execute(s);
-        }
-    }
+
 
     private void hideWikipediaPage() {
         //WebView webView = (WebView)findViewById(R.id.wikipediaPage);

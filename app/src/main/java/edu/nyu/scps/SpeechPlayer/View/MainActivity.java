@@ -1,21 +1,19 @@
 package edu.nyu.scps.SpeechPlayer.View;
 
 import android.content.Intent;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.Button;
-import android.widget.ListView;
-import android.widget.TextView;
-import android.widget.Toast;
+import android.widget.ImageView;
 
-import edu.nyu.scps.SpeechPlayer.Controller.SpeechSQLHelper;
+import java.io.InputStream;
+
 import edu.nyu.scps.SpeechPlayer.R;
 
 /**
@@ -23,104 +21,55 @@ import edu.nyu.scps.SpeechPlayer.R;
  */
 
 public class MainActivity extends AppCompatActivity {
-    private String databaseName = "speechdata.db";
-    private SpeechSQLHelper helper;   //Can't initialize this field before onCreate.
-    private SQLiteDatabase db;
-
-    private SpeechAdapter adapter;
-    // old code
-    //private SimpleCursorAdapter adapter;
-    private ListView listView;
-    private String sortType = "Orator";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        listView = (ListView) findViewById(R.id.listView);
-        TextView textView = (TextView)findViewById(R.id.empty);
-        listView.setEmptyView(textView);   //Display this TextView when table contains no records.
-
-        // old code
-        /*adapter = new SimpleCursorAdapter(
-                this,
-                android.R.layout.simple_list_item_2,
-                null,
-                new String[] {"orator",             "title"},
-                new int[]    {android.R.id.text1, android.R.id.text2},
-                0    //don't need any flags
-        );*/
-
-        helper = new SpeechSQLHelper(this, databaseName);
-        buildSpeechTable();
-
-        // set listener for ListView to go to the PlayerActivity screen
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(final AdapterView<?> parent, View view, final int position, final long id) {
-                Cursor cursor = (Cursor) parent.getItemAtPosition(position); //downcast
-                int oratorIndex = cursor.getColumnIndex(getResources().getString(R.string.sql_orator_column));
-                int titleIndex = cursor.getColumnIndex(getResources().getString(R.string.sql_title_column));
-
-                Intent intent = new Intent(getBaseContext(), PlayerActivity.class);
-                intent.putExtra("oratorData", cursor.getString(oratorIndex));
-                intent.putExtra("titleData", cursor.getString(titleIndex));
-                startActivity(intent);
-            }
-        });
-
-        // set listeners for table column headings to allow user to change sort order
-        int[] columnHeadingsIds = {R.id.titleColumnHeading, R.id.oratorColumnHeading, R.id.yearColumnHeading};
-
-        for (int id : columnHeadingsIds) {
-            TextView colHeading = (TextView)findViewById(id);
-            colHeading.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    TextView textView = (TextView) view;
-                    String newSortType = textView.getText().toString();
-                    if (newSortType.equals("Title") || newSortType.equals("Orator") || newSortType.equals("Year")) {
-                        sortType = newSortType;
-                        buildSpeechTable();
-                    } else {
-                        // invalid sort type, do nothing
-                    }
-                }
-            });
-        }
+        // load capitol image
+        loadTitleImage();
 
         // set listener for help button
-        Button helpButton = (Button) findViewById(R.id.helpButton);
-        helpButton.setOnClickListener(new View.OnClickListener() {
+        ImageView capitol = (ImageView) findViewById(R.id.capitol);
+        capitol.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(getApplicationContext(),R.string.help_text, Toast.LENGTH_LONG).show();
+                Intent intent = new Intent(getBaseContext(), ListActivity.class);
+                startActivity(intent);
             }
         });
     }
 
     /**
-     * Build a speech table from an SQL database (sorting by sortOrder column name)
+     * Load webview with title image
      */
-    private void buildSpeechTable() {
-        CreateTask createTask = new CreateTask();
-        createTask.execute();
+    private void loadTitleImage() {
+        new DownloadImageTask((ImageView) findViewById(R.id.capitol)).execute(getResources().getString(R.string.capitol_image));
     }
 
-    private class CreateTask extends AsyncTask<Void, Void, SQLiteDatabase> {
-        @Override
-        protected SQLiteDatabase doInBackground(Void... params) {
-            return helper.getWritableDatabase();
+    private class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
+        ImageView bmImage;
+
+        public DownloadImageTask(ImageView bmImage) {
+            this.bmImage = bmImage;
         }
 
-        @Override
-        protected void onPostExecute(SQLiteDatabase db) {
-            MainActivity.this.db = db;
-            Cursor cursor = helper.getCursor(sortType);
-            adapter = new SpeechAdapter(MainActivity.this, cursor, 0);
-            listView.setAdapter(adapter);
-            adapter.swapCursor(cursor);
+        protected Bitmap doInBackground(String... urls) {
+            String urldisplay = urls[0];
+            Bitmap mIcon11 = null;
+            try {
+                InputStream in = new java.net.URL(urldisplay).openStream();
+                mIcon11 = BitmapFactory.decodeStream(in);
+            } catch (Exception e) {
+                Log.e("Error", e.getMessage());
+                e.printStackTrace();
+            }
+            return mIcon11;
+        }
+
+        protected void onPostExecute(Bitmap result) {
+            bmImage.setImageBitmap(result);
         }
     }
 

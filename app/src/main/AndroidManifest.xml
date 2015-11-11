@@ -42,6 +42,11 @@
 
         <activity android:name=".View.WikipediaActivity" >
         </activity>
+        <activity
+            android:name=".View.ListActivity"
+            android:label="@string/title_activity_list"
+            android:theme="@style/AppTheme.NoActionBar" >
+        </activity>
     </application>
 
 </manifest>

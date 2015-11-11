@@ -2,10 +2,14 @@
     <string name="app_name">Famous US Speeches</string>
     <string name="action_settings">Settings</string>
 
+    <!-- Title Screen -->
+
+    <string name="app_title">Famous US Speeches</string>
+    <string name="capitol_image">https://upload.wikimedia.org/wikipedia/commons/d/d7/Photograph_of_the_U.S._Capitol_and_the_Inaugural_platform_during_ceremonies_marking_the_Inauguration_of_Dwight_D...._-_NARA_-_200417.jpg</string>
+
     <!-- Speech List Screen -->
 
-    <string name="list_title">Famous US Speeches</string>
-    <string name="instructions">Select a recording to play:</string>
+    <string name="instructions">Select a speech recording to play:</string>
 
     <string name="title_col_hdr">Title</string>
     <string name="orator_col_hdr">Orator</string>
@@ -42,4 +46,5 @@
     <string name="sql_title_column">title</string>
     <string name="sql_orator_column">orator</string>
     <string name="sql_year_column">year</string>
+    <string name="title_activity_list">ListActivity</string>
 </resources>
