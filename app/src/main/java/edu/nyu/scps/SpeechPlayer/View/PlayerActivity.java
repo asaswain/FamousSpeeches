@@ -5,14 +5,10 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -22,12 +18,12 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.io.InputStream;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.TimeUnit;
 
+import edu.nyu.scps.SpeechPlayer.Controller.DownloadImageTask;
 import edu.nyu.scps.SpeechPlayer.Controller.MediaPlayerService;
 import edu.nyu.scps.SpeechPlayer.Model.CurrentlyPlaying;
 import edu.nyu.scps.SpeechPlayer.Model.Speech;
@@ -156,7 +152,7 @@ public class PlayerActivity extends AppCompatActivity {
                             TimeUnit.MILLISECONDS.toSeconds(millis) - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(millis))
                     );
 
-                    progressTextView.setText("Time Elapsed: " + time);
+                    progressTextView.setText(getResources().getString(R.string.time_elapsed) + " " + time);
 
                     // change pause/play button text based on if music is playing
                     final Button pausePlayButton = (Button) findViewById(R.id.pausePlayButton);
@@ -188,8 +184,6 @@ public class PlayerActivity extends AppCompatActivity {
         wikipediaButton.setOnClickListener(new Button.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Button wikipediaButton = (Button) v;
-
                 Intent intent = new Intent(getBaseContext(), WikipediaActivity.class);
                 intent.putExtra("wikipediaURL", mySpeech.getWikipediaURL());
                 startActivity(intent);
@@ -347,43 +341,7 @@ public class PlayerActivity extends AppCompatActivity {
      * @param mySpeech - speech to load portrait URL for
      */
     private void loadPortrait(Speech mySpeech) {
-        if (mySpeech.getPortraitURL().equals("")) {
-            new DownloadPortraitTask((ImageView) findViewById(R.id.portrait)).execute("");
-        } else {
-            String s = mySpeech.getPortraitURL();
-            new DownloadPortraitTask((ImageView) findViewById(R.id.portrait)).execute(s);
-        }
-    }
-
-    private class DownloadPortraitTask extends AsyncTask<String, Void, Bitmap> {
-        ImageView bmImage;
-
-        public DownloadPortraitTask(ImageView bmImage) {
-            this.bmImage = bmImage;
-        }
-
-        protected Bitmap doInBackground(String... urls) {
-            String urldisplay = urls[0];
-            Bitmap mIcon11 = null;
-            try {
-                InputStream in = new java.net.URL(urldisplay).openStream();
-                mIcon11 = BitmapFactory.decodeStream(in);
-            } catch (Exception e) {
-                Log.e("Error", e.getMessage());
-                e.printStackTrace();
-            }
-            return mIcon11;
-        }
-
-        protected void onPostExecute(Bitmap result) {
-            bmImage.setImageBitmap(result);
-        }
-    }
-
-
-
-    private void hideWikipediaPage() {
-        //WebView webView = (WebView)findViewById(R.id.wikipediaPage);
-        //webView.loadUrl("about:blank");
+        String s = mySpeech.getPortraitURL();
+        new DownloadImageTask((ImageView) findViewById(R.id.portrait)).execute(s);
     }
 }

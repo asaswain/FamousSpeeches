@@ -25,8 +25,8 @@
     <string name="start_service">edu.nyu.scps.speechplayer.service.MY_SERVICE</string>
 
     <string name="speech_title">Title of Speech</string>
+    <string name="time_elapsed">Time Elapsed:</string>
     <string name="show_wikipedia">Show Wikipedia Page</string>
-    <string name="hide_wikipedia">Hide Wikipedia Page</string>
 
     <string name="pause_button">Pause</string>
     <string name="play_button">Play</string>
