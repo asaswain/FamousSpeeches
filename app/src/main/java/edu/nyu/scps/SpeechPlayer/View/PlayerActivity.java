@@ -333,7 +333,7 @@ public class PlayerActivity extends AppCompatActivity {
 
     private void loadSpeechTitle(Speech mySpeech) {
         TextView textview = (TextView)findViewById(R.id.speechTitle);
-        textview.setText(mySpeech.getTitle());
+        textview.setText(mySpeech.getTitle() + " - " + mySpeech.getOrator().getFullName() + " (" + mySpeech.getYear() + ")");
     }
 
     /**
@@ -341,7 +341,7 @@ public class PlayerActivity extends AppCompatActivity {
      * @param mySpeech - speech to load portrait URL for
      */
     private void loadPortrait(Speech mySpeech) {
-        String s = mySpeech.getPortraitURL();
-        new DownloadImageTask((ImageView) findViewById(R.id.portrait)).execute(s);
+        String url = mySpeech.getPortraitURL();
+        new DownloadImageTask((ImageView) findViewById(R.id.portrait)).execute(url);
     }
 }

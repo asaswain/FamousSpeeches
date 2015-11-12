@@ -34,7 +34,7 @@ public class OratorList {
                     break;
                 } else {
                     // create orator object
-                    String tokenArray[] = input.split(",");
+                    String tokenArray[] = input.split("\\*");
                     String name = tokenArray[0];
                     String imageURL = tokenArray[1];
                     Orator tmpOrator = new Orator(name, imageURL);

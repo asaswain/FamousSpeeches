@@ -37,7 +37,7 @@ public class SpeechList {
                     break;
                 } else {
                     // create speech object
-                    String tokenArray[] = input.split(",");
+                    String tokenArray[] = input.split("\\*");
                     String title = tokenArray[0];
                     String oratorName = tokenArray[1];
                     Orator orator = oratorList.getOrator(oratorName);

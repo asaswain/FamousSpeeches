@@ -2,6 +2,8 @@ package edu.nyu.scps.SpeechPlayer.Controller;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.ColorMatrix;
+import android.graphics.ColorMatrixColorFilter;
 import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.ImageView;
@@ -9,7 +11,7 @@ import android.widget.ImageView;
 import java.io.InputStream;
 
 /**
- * Created by asaswain on 11/11/15.
+ * This class downloads and image from a website URL and converts it to a black & white image
  */
 public class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
     ImageView bmImage;
@@ -32,6 +34,12 @@ public class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
     }
 
     protected void onPostExecute(Bitmap result) {
+        // this code forces us to display the image in black & white
+        ColorMatrix matrix = new ColorMatrix();
+        matrix.setSaturation(0);
+        ColorMatrixColorFilter filter = new ColorMatrixColorFilter(matrix);
+
         bmImage.setImageBitmap(result);
+        bmImage.setColorFilter(filter);
     }
 }

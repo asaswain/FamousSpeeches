@@ -7,7 +7,7 @@
     <application
         android:name=".Controller.SpeechPlayer"
         android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@drawable/paperscroll"
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <activity
