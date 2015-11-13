@@ -25,7 +25,7 @@ public class MainActivity extends AppCompatActivity {
         // load capitol image
         loadTitleImage();
 
-        // set listener for help button
+        // set listener for capitol image, to go to list of speeches
         ImageView capitol = (ImageView) findViewById(R.id.capitol);
         capitol.setOnClickListener(new View.OnClickListener() {
             @Override

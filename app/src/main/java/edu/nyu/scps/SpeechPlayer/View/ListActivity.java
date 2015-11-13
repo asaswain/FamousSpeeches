@@ -16,6 +16,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import edu.nyu.scps.SpeechPlayer.Controller.SpeechSQLHelper;
+import edu.nyu.scps.SpeechPlayer.Model.CurrentlyPlaying;
+import edu.nyu.scps.SpeechPlayer.Model.Speech;
 import edu.nyu.scps.SpeechPlayer.R;
 
 /**
@@ -90,7 +92,7 @@ public class ListActivity extends AppCompatActivity {
             });
         }
 
-        // set listener for help button
+        // set listener for Nelp button
         Button helpButton = (Button) findViewById(R.id.helpButton);
         helpButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -98,6 +100,28 @@ public class ListActivity extends AppCompatActivity {
                 Toast.makeText(getApplicationContext(),R.string.help_text, Toast.LENGTH_LONG).show();
             }
         });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        // hide/show Now Playing button
+        Button nowPlaying = (Button) findViewById(R.id.nowPlaying);
+
+        if (CurrentlyPlaying.getCurrentlyPlayingSpeech() == null) {
+            nowPlaying.setVisibility(View.INVISIBLE);
+        } else {
+            nowPlaying.setVisibility(View.VISIBLE);
+
+            // set listener for New Playing button
+            nowPlaying.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    loadCurrentSpeechScreen();
+                }
+            });
+        }
     }
 
     /**
@@ -144,5 +168,15 @@ public class ListActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    // load PlayerActivity screen for current speech
+    private void loadCurrentSpeechScreen() {
+        Speech currentSpeech = CurrentlyPlaying.getCurrentlyPlayingSpeech();
+
+        Intent intent = new Intent(getBaseContext(), PlayerActivity.class);
+        intent.putExtra("oratorData", currentSpeech.getOrator().getFullName());
+        intent.putExtra("titleData", currentSpeech.getTitle());
+        startActivity(intent);
     }
 }

@@ -8,27 +8,36 @@
         android:name=".Controller.SpeechPlayer"
         android:allowBackup="true"
         android:icon="@drawable/paperscroll"
-        android:label="@string/app_name"
-        android:theme="@style/AppTheme" >
+        android:label="@string/app_name">
         <activity
             android:name=".View.MainActivity"
             android:configChanges="keyboardHidden|orientation"
             android:label="@string/app_name"
-            android:screenOrientation="portrait" >
+            android:screenOrientation="portrait"
+            android:theme="@style/AppThemeNoBar1">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <activity
             android:name=".View.PlayerActivity"
             android:configChanges="keyboardHidden|orientation"
             android:label="@string/title_activity_player"
-            android:screenOrientation="portrait" >
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-            </intent-filter>
+            android:screenOrientation="portrait"
+            android:theme="@style/AppThemeBar">
+        </activity>
+
+        <activity
+            android:name=".View.ListActivity"
+            android:label="@string/title_activity_list"
+            android:theme="@style/AppThemeBar" >
+        </activity>
+
+        <activity
+            android:name=".View.WikipediaActivity">
         </activity>
 
         <service
@@ -39,14 +48,6 @@
                 <action android:name="edu.nyu.scps.speechplayer.service.MY_SERVICE" />
             </intent-filter>
         </service>
-
-        <activity android:name=".View.WikipediaActivity" >
-        </activity>
-        <activity
-            android:name=".View.ListActivity"
-            android:label="@string/title_activity_list"
-            android:theme="@style/AppTheme.NoActionBar" >
-        </activity>
     </application>
 
 </manifest>

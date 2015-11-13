@@ -9,7 +9,8 @@
 
     <!-- Speech List Screen -->
 
-    <string name="instructions">Select a speech recording to play:</string>
+    <string name="instructions">Select a speech to play:</string>
+    <string name="now_playing">Now Playing -></string>
 
     <string name="title_col_hdr">Title</string>
     <string name="orator_col_hdr">Orator</string>
