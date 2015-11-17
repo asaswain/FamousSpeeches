@@ -27,6 +27,7 @@
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
         android:layout_margin="5dp"
+        android:thumbTint="@color/dark_blue"
         android:max="100"
         android:progress="0"/>
 
@@ -45,14 +46,18 @@
             android:id="@+id/pausePlayButton"
             android:layout_width="75dp"
             android:layout_height="wrap_content"
-            android:layout_margin="3dp"
+            android:layout_margin="5dp"
+            android:background="@color/light_red"
+            android:textColor="@color/white"
             android:text="@string/pause_button"/>
 
         <Button
             android:id="@+id/stopButton"
             android:layout_width="75dp"
             android:layout_height="wrap_content"
-            android:layout_margin="3dp"
+            android:layout_margin="5dp"
+            android:background="@color/light_red"
+            android:textColor="@color/white"
             android:text="@string/stop_button"/>
     </LinearLayout>
 
@@ -66,14 +71,18 @@
             android:id="@+id/rewindButton"
             android:layout_width="175dp"
             android:layout_height="50dp"
-            android:layout_margin="3dp"
+            android:layout_margin="5dp"
+            android:background="@color/medium_red"
+            android:textColor="@color/white"
             android:text="@string/rewind_button"/>
 
         <Button
             android:id="@+id/fastForwardButton"
             android:layout_width="175dp"
             android:layout_height="50dp"
-            android:layout_marginRight="5dp"
+            android:layout_margin="5dp"
+            android:background="@color/medium_red"
+            android:textColor="@color/white"
             android:text="@string/fast_forward_button"/>
     </LinearLayout>
 
@@ -87,6 +96,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
+        android:thumbTint="@color/dark_blue"
         android:max="100"
         android:progress="50"/>
 
@@ -101,6 +111,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="5dp"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:background="@color/dark_red"
+            android:textColor="@color/white"
             android:text="@string/show_wikipedia"/>
     </LinearLayout>
 
