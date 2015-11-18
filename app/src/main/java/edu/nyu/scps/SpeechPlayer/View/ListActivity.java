@@ -19,6 +19,7 @@ import edu.nyu.scps.SpeechPlayer.Controller.SpeechSQLHelper;
 import edu.nyu.scps.SpeechPlayer.Model.CurrentlyPlaying;
 import edu.nyu.scps.SpeechPlayer.Model.Speech;
 import edu.nyu.scps.SpeechPlayer.R;
+import mehdi.sakout.fancybuttons.FancyButton;
 
 /**
  * This class displays a list of speeches
@@ -93,7 +94,7 @@ public class ListActivity extends AppCompatActivity {
         }
 
         // set listener for Nelp button
-        Button helpButton = (Button) findViewById(R.id.helpButton);
+        FancyButton helpButton = (FancyButton) findViewById(R.id.helpButton);
         helpButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:fancy="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -41,7 +42,6 @@
                 android:layout_gravity="end"
                 android:textColor="@color/white"
                 android:background="@color/light_red"/>
-
         </LinearLayout>
 
         <LinearLayout
@@ -54,6 +54,8 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="10"
+                android:paddingLeft="2dp"
+                android:paddingRight="2dp"
                 android:textStyle="bold"
                 android:background="@color/light_blue"
                 android:layout_marginBottom="5dp"
@@ -64,6 +66,8 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="8"
+                android:paddingLeft="2dp"
+                android:paddingRight="2dp"
                 android:textStyle="bold"
                 android:background="@color/medium_blue"
                 android:textColor="@color/white"
@@ -72,9 +76,10 @@
 
             <TextView
                 android:id="@+id/yearColumnHeading"
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:layout_weight="2"
+                android:paddingLeft="2dp"
+                android:paddingRight="2dp"
                 android:textStyle="bold"
                 android:background="@color/dark_blue"
                 android:textColor="@color/white"
@@ -88,24 +93,26 @@
         <ListView
             android:id="@+id/listView"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="0dp"
+            android:layout_weight="1"
             android:layout_marginTop="5dp"
-            android:layout_marginBottom="5dp"/>
+            android:layout_marginBottom="15dp"/>
 
-        <LinearLayout
-            android:layout_width="match_parent"
+        <mehdi.sakout.fancybuttons.FancyButton
+            android:id="@+id/helpButton"
+            android:layout_gravity="center_horizontal"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:gravity="center_horizontal"
-            android:orientation="horizontal">
-
-            <Button
-                android:id="@+id/helpButton"
-                android:text="@string/help_button"
-                android:background="@color/dark_red"
-                android:textColor="@color/white"
-                android:layout_width="100dp"
-                android:layout_height="wrap_content" />
-        </LinearLayout>
+            android:paddingBottom="10dp"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp"
+            android:paddingTop="10dp"
+            fancy:fb_borderColor="#FFFFFF"
+            fancy:fb_borderWidth="1dp"
+            fancy:fb_radius="30dp"
+            fancy:fb_defaultColor="@color/dark_red"
+            fancy:fb_textColor="@color/white"
+            fancy:fb_text="@string/help_button"/>
 
     </LinearLayout>
 

@@ -29,6 +29,7 @@ import edu.nyu.scps.SpeechPlayer.Model.CurrentlyPlaying;
 import edu.nyu.scps.SpeechPlayer.Model.Speech;
 import edu.nyu.scps.SpeechPlayer.Model.SpeechList;
 import edu.nyu.scps.SpeechPlayer.R;
+import mehdi.sakout.fancybuttons.FancyButton;
 
 /**
  * This class plays the recording of a speech and displays the Wikipedia entry for that speech
@@ -156,7 +157,7 @@ public class PlayerActivity extends AppCompatActivity {
                     progressTextView.setText(timeElapsed);
 
                     // change pause/play button text based on if music is playing
-                    final Button pausePlayButton = (Button) findViewById(R.id.pausePlayButton);
+                    final FancyButton pausePlayButton = (FancyButton) findViewById(R.id.pausePlayButton);
                     if (mediaPlayerService.isSpeechPlaying()) {
                         pausePlayButton.setText(getResources().getString(R.string.pause_button));
                     } else {
@@ -181,7 +182,7 @@ public class PlayerActivity extends AppCompatActivity {
         // button click listeners
 
         // display wikipedia screen button
-        final Button wikipediaButton = (Button) findViewById(R.id.wikipediaButton);
+        final FancyButton wikipediaButton = (FancyButton) findViewById(R.id.wikipediaButton);
         wikipediaButton.setOnClickListener(new Button.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -192,7 +193,7 @@ public class PlayerActivity extends AppCompatActivity {
         });
 
         // recording playback control buttons
-        final Button pausePlayButton = (Button) findViewById(R.id.pausePlayButton);
+        final FancyButton pausePlayButton = (FancyButton) findViewById(R.id.pausePlayButton);
         pausePlayButton.setOnClickListener(new Button.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -207,7 +208,7 @@ public class PlayerActivity extends AppCompatActivity {
 
         });
 
-        final Button stopButton = (Button) findViewById(R.id.stopButton);
+        final FancyButton stopButton = (FancyButton) findViewById(R.id.stopButton);
         stopButton.setOnClickListener(new Button.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -218,7 +219,7 @@ public class PlayerActivity extends AppCompatActivity {
             }
         });
 
-        final Button rewindButton = (Button) findViewById(R.id.rewindButton);
+        final FancyButton rewindButton = (FancyButton) findViewById(R.id.rewindButton);
         rewindButton.setOnClickListener(new Button.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -229,7 +230,7 @@ public class PlayerActivity extends AppCompatActivity {
             }
         });
 
-        final Button fastforwardButton = (Button) findViewById(R.id.fastForwardButton);
+        final FancyButton fastforwardButton = (FancyButton) findViewById(R.id.fastForwardButton);
         fastforwardButton.setOnClickListener(new Button.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -333,8 +334,11 @@ public class PlayerActivity extends AppCompatActivity {
     */
 
     private void loadSpeechTitle(Speech mySpeech) {
-        TextView textview = (TextView)findViewById(R.id.speechTitle);
-        textview.setText(mySpeech.getTitle() + " - " + mySpeech.getOrator().getFullName() + " (" + mySpeech.getYear() + ")");
+        TextView titleview = (TextView)findViewById(R.id.speechTitle);
+        titleview.setText(mySpeech.getTitle());
+
+        TextView oratorView = (TextView)findViewById(R.id.oratorNameAndYear);
+        oratorView.setText(mySpeech.getOrator().getFullName() + " (" + mySpeech.getYear() + ")");
     }
 
     /**
