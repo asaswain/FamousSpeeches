@@ -138,9 +138,9 @@ public class MediaPlayerService extends Service implements AudioManager.OnAudioF
     // and then calculate percnetage if the records that has been played using the time and the duration
     private double calcProgress() {
         double progress = 0;
-        if (mediaPlayer != null && isPlaying) {
+        if (mediaPlayer != null) {
             // initialize duration of recording only once
-            if (!durationSaved) {
+            if (!durationSaved && isPlaying) {
                 int duration = mediaPlayer.getDuration();
                 setDuration(duration);
             }

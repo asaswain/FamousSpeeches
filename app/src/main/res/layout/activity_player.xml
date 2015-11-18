@@ -43,11 +43,20 @@
         android:gravity="center">
 
         <Button
+            android:id="@+id/rewindButton"
+            android:layout_width="75dp"
+            android:layout_height="50dp"
+            android:layout_margin="5dp"
+            android:background="@color/light_red"
+            android:textColor="@color/white"
+            android:text="@string/rewind_button"/>
+
+        <Button
             android:id="@+id/pausePlayButton"
             android:layout_width="75dp"
             android:layout_height="wrap_content"
             android:layout_margin="5dp"
-            android:background="@color/light_red"
+            android:background="@color/medium_red"
             android:textColor="@color/white"
             android:text="@string/pause_button"/>
 
@@ -56,35 +65,22 @@
             android:layout_width="75dp"
             android:layout_height="wrap_content"
             android:layout_margin="5dp"
-            android:background="@color/light_red"
-            android:textColor="@color/white"
-            android:text="@string/stop_button"/>
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center">
-
-        <Button
-            android:id="@+id/rewindButton"
-            android:layout_width="175dp"
-            android:layout_height="50dp"
-            android:layout_margin="5dp"
             android:background="@color/medium_red"
             android:textColor="@color/white"
-            android:text="@string/rewind_button"/>
+            android:text="@string/stop_button"/>
 
         <Button
             android:id="@+id/fastForwardButton"
-            android:layout_width="175dp"
+            android:layout_width="75dp"
             android:layout_height="50dp"
             android:layout_margin="5dp"
-            android:background="@color/medium_red"
+            android:background="@color/light_red"
             android:textColor="@color/white"
             android:text="@string/fast_forward_button"/>
+
     </LinearLayout>
+
+
 
     <TextView
         android:layout_width="match_parent"

@@ -152,7 +152,8 @@ public class PlayerActivity extends AppCompatActivity {
                             TimeUnit.MILLISECONDS.toSeconds(millis) - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(millis))
                     );
 
-                    progressTextView.setText(getResources().getString(R.string.time_elapsed) + " " + time);
+                    String timeElapsed = getResources().getString(R.string.time_elapsed) + " " + time;
+                    progressTextView.setText(timeElapsed);
 
                     // change pause/play button text based on if music is playing
                     final Button pausePlayButton = (Button) findViewById(R.id.pausePlayButton);

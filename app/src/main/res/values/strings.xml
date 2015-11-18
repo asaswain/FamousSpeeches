@@ -34,8 +34,8 @@
     <string name="stop_button">Stop</string>
     <string name="volume">Volume:</string>
 
-    <string name="rewind_button">Backward 15 sec</string>
-    <string name="fast_forward_button">Forward 15 sec</string>
+    <string name="rewind_button">Back\n15 sec</string>
+    <string name="fast_forward_button">Forward\n15 sec</string>
 
     <string name="portrait_loading_title">Loading Portrait For Speech</string>
     <string name="wikipedia_loading_title">Loading Wikipedia Page For Speech</string>
