@@ -16,6 +16,8 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
+        <!-- Instructions and "Now Playing" button -->
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -43,6 +45,8 @@
                 android:textColor="@color/white"
                 android:background="@color/light_red"/>
         </LinearLayout>
+
+        <!-- ListView Column Headings -->
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -97,6 +101,8 @@
             android:layout_weight="1"
             android:layout_marginTop="5dp"
             android:layout_marginBottom="15dp"/>
+
+        <!-- Help button -->
 
         <mehdi.sakout.fancybuttons.FancyButton
             android:id="@+id/helpButton"
