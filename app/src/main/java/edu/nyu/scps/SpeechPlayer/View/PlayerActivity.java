@@ -36,6 +36,7 @@ import mehdi.sakout.fancybuttons.FancyButton;
  */
 
 public class PlayerActivity extends AppCompatActivity {
+
     private MediaPlayerService mediaPlayerService;
     private boolean isBound = false; //Is this Activity currently bound to the Service?
     private SeekBar volumeSeekBar;
@@ -43,9 +44,9 @@ public class PlayerActivity extends AppCompatActivity {
     private TextView progressTextView;
     private String orator;
     private String title;
-
-    // speech record current loaded
+    // speech record currently loaded
     private Speech mySpeech;
+
 
     private ServiceConnection serviceConnection = new ServiceConnection() {
         @Override
@@ -181,17 +182,6 @@ public class PlayerActivity extends AppCompatActivity {
 
         // button click listeners
 
-        // display wikipedia screen button
-        final FancyButton wikipediaButton = (FancyButton) findViewById(R.id.wikipediaButton);
-        wikipediaButton.setOnClickListener(new Button.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getBaseContext(), WikipediaActivity.class);
-                intent.putExtra("wikipediaURL", mySpeech.getWikipediaURL());
-                startActivity(intent);
-            }
-        });
-
         // recording playback control buttons
         final FancyButton pausePlayButton = (FancyButton) findViewById(R.id.pausePlayButton);
         pausePlayButton.setOnClickListener(new Button.OnClickListener() {
@@ -240,6 +230,30 @@ public class PlayerActivity extends AppCompatActivity {
                 }
             }
         });
+
+        // listener for speechText button
+        final FancyButton speechTextButton = (FancyButton) findViewById(R.id.speechTextButton);
+        speechTextButton.setOnClickListener(new Button.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getBaseContext(), SpeechTextActivity.class);
+                intent.putExtra("oratorData", mySpeech.getOrator().getFullName());
+                intent.putExtra("titleData", mySpeech.getTitle());
+                startActivity(intent);
+            }
+        });
+
+        // listener for Wikipedia button
+        final FancyButton wikipediaButton = (FancyButton) findViewById(R.id.wikipediaButton);
+        wikipediaButton.setOnClickListener(new Button.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getBaseContext(), WikipediaActivity.class);
+                intent.putExtra("wikipediaURL", mySpeech.getWikipediaURL());
+                startActivity(intent);
+            }
+        });
+
     }
 
     //Is the MediaPlayerService already running?
@@ -282,7 +296,8 @@ public class PlayerActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
+        // don't build menu
+        //getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
 
@@ -338,7 +353,8 @@ public class PlayerActivity extends AppCompatActivity {
         titleview.setText(mySpeech.getTitle());
 
         TextView oratorView = (TextView)findViewById(R.id.oratorNameAndYear);
-        oratorView.setText(mySpeech.getOrator().getFullName() + " (" + mySpeech.getYear() + ")");
+        String oratorAndYear = mySpeech.getOrator().getFullName() + " (" + mySpeech.getYear() + ")";
+        oratorView.setText(oratorAndYear);
     }
 
     /**

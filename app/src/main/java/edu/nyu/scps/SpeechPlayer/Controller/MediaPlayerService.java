@@ -11,8 +11,6 @@ import android.widget.Toast;
 
 import java.io.IOException;
 
-import edu.nyu.scps.SpeechPlayer.R;
-
 /**
  * This class plays speeches in a service
  */
@@ -26,6 +24,7 @@ public class MediaPlayerService extends Service implements AudioManager.OnAudioF
     private MediaPlayerBinder mediaPlayerBinder = new MediaPlayerBinder();
     boolean durationSaved = false;
     boolean isPlaying = false;
+    private String speechURL;
 
     public MediaPlayerService() {
     }
@@ -42,7 +41,7 @@ public class MediaPlayerService extends Service implements AudioManager.OnAudioF
     public int onStartCommand(Intent intent, int flags, int startId) {
 
         // read webpage address of speech mp3 file from Intent object
-        String speechURL = (String) intent.getExtras().get("SpeechURL");
+        speechURL = (String) intent.getExtras().get("SpeechURL");
         //Uri speechURL = Uri.parse("android.resource://" + getPackageName() + "/" + R.raw.musette);
 
         if (speechURL != null) {
@@ -227,7 +226,13 @@ public class MediaPlayerService extends Service implements AudioManager.OnAudioF
                 //Resume playback.
                 //Called only when focus is regained, not the first time focus is acquired.
                 if (mediaPlayer == null) {
-                    mediaPlayer = MediaPlayer.create(this, R.raw.musette);
+                    mediaPlayer = new MediaPlayer();
+                    try {
+                        mediaPlayer.setDataSource(speechURL);
+                    } catch (IOException e) {
+                        Toast toast = Toast.makeText(MediaPlayerService.this, e.toString(), Toast.LENGTH_LONG);
+                        toast.show();
+                    }
                 }
                 mediaPlayer.setVolume(volume, volume);
                 if (!mediaPlayer.isPlaying()) {

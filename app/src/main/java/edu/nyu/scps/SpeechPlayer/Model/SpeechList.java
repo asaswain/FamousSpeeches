@@ -3,7 +3,6 @@ package edu.nyu.scps.SpeechPlayer.Model;
 import android.content.Context;
 
 import java.io.BufferedReader;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -50,10 +49,6 @@ public class SpeechList {
                 }
             }
             inBuffer.close( );
-        }
-        catch (FileNotFoundException e)			//catch if input file does not exist
-        {
-            // do nothing
         }
         catch (IOException e)					//catch all other I/O exceptions
         {

@@ -42,7 +42,7 @@ public class ListActivity extends AppCompatActivity {
         setContentView(R.layout.activity_list);
 
         listView = (ListView) findViewById(R.id.listView);
-        TextView textView = (TextView)findViewById(R.id.empty);
+        TextView textView = (TextView) findViewById(R.id.empty);
         listView.setEmptyView(textView);   //Display this TextView when table contains no records.
 
         // old code
@@ -77,7 +77,7 @@ public class ListActivity extends AppCompatActivity {
         int[] columnHeadingsIds = {R.id.titleColumnHeading, R.id.oratorColumnHeading, R.id.yearColumnHeading};
 
         for (int id : columnHeadingsIds) {
-            TextView colHeading = (TextView)findViewById(id);
+            TextView colHeading = (TextView) findViewById(id);
             colHeading.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -98,7 +98,7 @@ public class ListActivity extends AppCompatActivity {
         helpButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(getApplicationContext(),R.string.help_text, Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplicationContext(), R.string.help_text, Toast.LENGTH_LONG).show();
             }
         });
     }
@@ -152,7 +152,9 @@ public class ListActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
+
+        // don't build menu
+        //getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
 
@@ -161,6 +163,7 @@ public class ListActivity extends AppCompatActivity {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
+
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
