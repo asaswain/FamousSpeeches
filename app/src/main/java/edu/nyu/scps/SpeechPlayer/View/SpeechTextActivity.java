@@ -19,7 +19,8 @@ public class SpeechTextActivity extends AppCompatActivity {
 
     private String orator;
     private String title;
-    private Speech mySpeech;
+    private String assetTitle;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,10 +33,16 @@ public class SpeechTextActivity extends AppCompatActivity {
         }
         if (extras.getString("titleData") != null) {
             title = extras.getString("titleData");
+            assetTitle = title;
+            // purge apostraphes from speech title
+            if (assetTitle != null) {
+                assetTitle = assetTitle.replace("'", "");
+                assetTitle = assetTitle.replace("’", "");
+            }
         }
 
         SpeechList mySpeechList = new SpeechList(this);
-        mySpeech = mySpeechList.getSpeech(orator, title);
+        Speech mySpeech = mySpeechList.getSpeech(orator, title);
 
         TextView titleview = (TextView) findViewById(R.id.speechTitle);
         titleview.setText(mySpeech.getTitle());
@@ -46,7 +53,7 @@ public class SpeechTextActivity extends AppCompatActivity {
 
         AssetManager assetManager = getAssets();
         try {
-            String assetName = orator + "*" + title + ".txt";
+            String assetName = orator + "*" + assetTitle + ".txt";
             InputStream input = assetManager.open(assetName);
 
             int size = input.available();
