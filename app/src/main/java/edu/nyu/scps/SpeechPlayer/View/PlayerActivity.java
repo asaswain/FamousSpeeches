@@ -148,13 +148,24 @@ public class PlayerActivity extends AppCompatActivity {
                     progressSeekBar.setProgress(prog);
 
                     // update time elapsed view
-                    int millis = mediaPlayerService.getTime();
-                    String time = String.format("%02d:%02d",
-                            TimeUnit.MILLISECONDS.toMinutes(millis),
-                            TimeUnit.MILLISECONDS.toSeconds(millis) - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(millis))
+                    int elapsedMillis = mediaPlayerService.getTime();
+                    String elpasedTime = String.format("%02d:%02d",
+                            TimeUnit.MILLISECONDS.toMinutes(elapsedMillis),
+                            TimeUnit.MILLISECONDS.toSeconds(elapsedMillis) - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(elapsedMillis))
                     );
 
-                    String timeElapsed = getResources().getString(R.string.time_elapsed) + " " + time;
+                    int totalMillis = mediaPlayerService.getDuration();
+                    String totalTime = String.format("%02d:%02d",
+                            TimeUnit.MILLISECONDS.toMinutes(totalMillis),
+                            TimeUnit.MILLISECONDS.toSeconds(totalMillis) - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(totalMillis))
+                    );
+
+                    String timeElapsed;
+                    if (totalMillis != 0) {
+                        timeElapsed = getResources().getString(R.string.time_elapsed) + " " + elpasedTime + " / " + totalTime;
+                    } else {
+                        timeElapsed = getResources().getString(R.string.loading);
+                    }
                     progressTextView.setText(timeElapsed);
 
                     // change pause/play button text based on if music is playing

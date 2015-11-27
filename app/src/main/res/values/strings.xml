@@ -24,7 +24,7 @@
     <!-- Speech Player Screen -->
 
     <string name="start_service">edu.nyu.scps.speechplayer.service.MY_SERVICE</string>
-
+    <string name="loading">Loading...</string>
     <string name="time_elapsed">Time Elapsed:</string>
     <string name="pause_button">Pause</string>
     <string name="play_button">Play</string>
