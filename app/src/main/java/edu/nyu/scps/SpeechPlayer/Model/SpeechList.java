@@ -35,15 +35,35 @@ public class SpeechList {
                 if (input == null) {              //if input is null  end of file
                     break;
                 } else {
-                    // create speech object
+                    // create speech object from raw data in speech_data file
+                    String title = "";
+                    Orator orator = null;
+                    String webRecordingURL = "";
+                    String wikipediaURL = "";
+                    Integer year = 0;
+                    Integer length = 0;
+
                     String tokenArray[] = input.split("\\*");
-                    String title = tokenArray[0];
-                    String oratorName = tokenArray[1];
-                    Orator orator = oratorList.getOrator(oratorName);
-                    String webRecordingURL = tokenArray[2];
-                    String wikipediaURL = tokenArray[3];
-                    Integer year = Integer.valueOf(tokenArray[4]);
-                    Speech tmpSpeech = new Speech(title, orator, webRecordingURL, wikipediaURL, year);
+                    if (tokenArray.length >= 1) {
+                        title = tokenArray[0];
+                    }
+                    if (tokenArray.length >= 2) {
+                        String oratorName = tokenArray[1];
+                        orator = oratorList.getOrator(oratorName);
+                    }
+                    if (tokenArray.length >= 3) {
+                        webRecordingURL = tokenArray[2];
+                    }
+                    if (tokenArray.length >= 4) {
+                        wikipediaURL = tokenArray[3];
+                    }
+                    if (tokenArray.length >= 5) {
+                        year = Integer.valueOf(tokenArray[4]);
+                    }
+                    if (tokenArray.length >= 6) {
+                        length = Integer.valueOf((tokenArray[5]));
+                    }
+                    Speech tmpSpeech = new Speech(title, orator, webRecordingURL, wikipediaURL, year, length);
                     // add to list
                     speechList.put(tmpSpeech.hashCode(), tmpSpeech);
                 }

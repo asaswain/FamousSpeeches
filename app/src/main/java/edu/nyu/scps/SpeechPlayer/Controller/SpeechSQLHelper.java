@@ -26,6 +26,7 @@ public class SpeechSQLHelper extends SQLiteOpenHelper {
     private final String oratorColName;
     private final String titleColName;
     private final String yearColName;
+    private final String lengthColName;
 
     public SpeechSQLHelper(Context context, String name) {
         super(context, name, null, 1);
@@ -34,6 +35,7 @@ public class SpeechSQLHelper extends SQLiteOpenHelper {
         oratorColName = context.getResources().getString(R.string.sql_orator_column);
         titleColName = context.getResources().getString(R.string.sql_title_column);
         yearColName = context.getResources().getString(R.string.sql_year_column);
+        lengthColName = context.getResources().getString(R.string.sql_length_column);
     }
 
     @Override
@@ -42,7 +44,8 @@ public class SpeechSQLHelper extends SQLiteOpenHelper {
                 + "_id INTEGER PRIMARY KEY AUTOINCREMENT,"
                 + oratorColName + " TEXT,"
                 + titleColName + " TEXT,"
-                + yearColName + " INTEGER"
+                + yearColName + " INTEGER,"
+                + lengthColName + " INTEGER"
                 + ");";
 
         try {
@@ -64,6 +67,7 @@ public class SpeechSQLHelper extends SQLiteOpenHelper {
             contentValues.put(oratorColName, tmpSpeech.getOrator().getFullName());
             contentValues.put(titleColName, tmpSpeech.getTitle());
             contentValues.put(yearColName, tmpSpeech.getYear());
+            contentValues.put(lengthColName, tmpSpeech.getLengthInSeconds());
             if (db.insert(speechTableName, null, contentValues) <= 0) {
                 Log.e("myTag", "insert failed");
             }
@@ -82,7 +86,7 @@ public class SpeechSQLHelper extends SQLiteOpenHelper {
     public Cursor getCursor(String sortType) {
         SQLiteDatabase db = getReadableDatabase();
         //can say "_id, name" instead of "*", but _id must be included.
-        String sqlQuery = "SELECT _id, " + oratorColName + ", " + titleColName + ", " + yearColName + " FROM " + speechTableName;
+        String sqlQuery = "SELECT _id, " + oratorColName + ", " + titleColName + ", " + yearColName + ", " + lengthColName + " FROM " + speechTableName;
 
         switch (sortType) {
             case "Title":
@@ -90,6 +94,9 @@ public class SpeechSQLHelper extends SQLiteOpenHelper {
                 break;
             case "Orator":
                 sqlQuery += " ORDER BY " + oratorColName;
+                break;
+            case "Length":
+                sqlQuery += " ORDER BY " + lengthColName;
                 break;
             default:
                 sqlQuery += " ORDER BY " + yearColName;

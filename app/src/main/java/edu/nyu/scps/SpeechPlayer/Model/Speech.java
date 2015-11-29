@@ -5,11 +5,18 @@ package edu.nyu.scps.SpeechPlayer.Model;
  */
 public class Speech {
 
+    // title of speech
     private String title;
+    // name of person who gave speech
     private Orator orator;
+    // URL of mp3 recording of speech
     private String webRecordingURL;
+    // URL of wikipedia page about speech
     private String wikipediaURL;
+    // year speech was recorded
     int year;
+    // length of speech in seconds
+    int lengthInSeconds;
 
     public Speech() {
         this.title = "";
@@ -17,6 +24,7 @@ public class Speech {
         this.webRecordingURL = "";
         this.wikipediaURL = "";
         this.year = 0;
+        this.lengthInSeconds = 0;
     }
 
     // copy constructor
@@ -26,22 +34,22 @@ public class Speech {
         this.webRecordingURL = other.webRecordingURL;
         this.wikipediaURL = other.wikipediaURL;
         this.year = other.year;
+        this.lengthInSeconds = other.lengthInSeconds;
     }
 
     public Speech(String title, Orator orator) {
+        this();
         this.title = title;
         this.orator = orator;
-        this.webRecordingURL = "";
-        this.wikipediaURL = "";
-        this.year = 0;
     }
 
-    public Speech(String title, Orator orator, String webUrl, String wikipediaURL, int year) {
+    public Speech(String title, Orator orator, String webUrl, String wikipediaURL, int year, int lengthInSeconds) {
         this.title = title;
         this.orator = orator;
         this.webRecordingURL = webUrl;
         this.wikipediaURL = wikipediaURL;
         this.year = year;
+        this.lengthInSeconds = lengthInSeconds;
     }
 
     public String getTitle() {
@@ -92,6 +100,14 @@ public class Speech {
         this.wikipediaURL = wikipediaURL;
     }
 
+    public int getLengthInSeconds() {
+        return lengthInSeconds;
+    }
+
+    public void setLengthInSeconds(int lengthInSeconds) {
+        this.lengthInSeconds = lengthInSeconds;
+    }
+
     public String toString() {
         return orator + " " + title;
     }
@@ -122,5 +138,4 @@ public class Speech {
         }
         return hash;
     }
-
 }

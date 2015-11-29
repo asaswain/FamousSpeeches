@@ -32,10 +32,17 @@ public class OratorList {
                 if (input == null) {              //if input is null  end of file
                     break;
                 } else {
-                    // create orator object
+                    // create orator object from raw data in "orator_data" file
                     String tokenArray[] = input.split("\\*");
-                    String name = tokenArray[0];
-                    String imageURL = tokenArray[1];
+                    String name = "";
+                    String imageURL = "";
+
+                    if (tokenArray.length >= 1) {
+                        name = tokenArray[0];
+                    }
+                    if (tokenArray.length >= 2) {
+                        imageURL = tokenArray[1];
+                    }
                     Orator tmpOrator = new Orator(name, imageURL);
                     // add to list
                     oratorList.put(tmpOrator.hashCode(), tmpOrator);

@@ -57,11 +57,12 @@
                 android:id="@+id/titleColumnHeading"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:layout_weight="10"
+                android:layout_weight="8"
                 android:paddingLeft="2dp"
                 android:paddingRight="2dp"
                 android:textStyle="bold"
-                android:background="@color/light_blue"
+                android:background="@color/lightest_blue"
+                android:textColor="@color/black"
                 android:layout_marginBottom="5dp"
                 android:text="@string/title_col_hdr"/>
 
@@ -73,23 +74,36 @@
                 android:paddingLeft="2dp"
                 android:paddingRight="2dp"
                 android:textStyle="bold"
-                android:background="@color/medium_blue"
-                android:textColor="@color/white"
+                android:background="@color/light_blue"
+                android:textColor="@color/black"
                 android:layout_marginBottom="5dp"
                 android:text="@string/orator_col_hdr"/>
 
             <TextView
                 android:id="@+id/yearColumnHeading"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="match_parent"
+                android:layout_weight="3"
+                android:paddingLeft="2dp"
+                android:paddingRight="2dp"
+                android:textStyle="bold"
+                android:background="@color/medium_blue"
+                android:textColor="@color/white"
+                android:layout_marginBottom="5dp"
+                android:text="@string/year_col_hdr"/>
+
+            <TextView
+                android:id="@+id/lengthColumnHeading"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="4"
                 android:paddingLeft="2dp"
                 android:paddingRight="2dp"
                 android:textStyle="bold"
                 android:background="@color/dark_blue"
                 android:textColor="@color/white"
                 android:layout_marginBottom="5dp"
-                android:text="@string/year_col_hdr"/>
-
+                android:text="@string/length_col_hdr"/>
         </LinearLayout>
 
         <!-- This ListView is displayed when the table contains records. -->

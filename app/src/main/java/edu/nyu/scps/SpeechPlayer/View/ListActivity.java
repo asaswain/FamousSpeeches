@@ -34,7 +34,7 @@ public class ListActivity extends AppCompatActivity {
     // old code
     //private SimpleCursorAdapter adapter;
     private ListView listView;
-    private String sortType = "Orator";
+    private String sortType = "Title";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,7 +74,7 @@ public class ListActivity extends AppCompatActivity {
         });
 
         // set listeners for table column headings to allow user to change sort order
-        int[] columnHeadingsIds = {R.id.titleColumnHeading, R.id.oratorColumnHeading, R.id.yearColumnHeading};
+        int[] columnHeadingsIds = {R.id.titleColumnHeading, R.id.oratorColumnHeading, R.id.yearColumnHeading, R.id.lengthColumnHeading};
 
         for (int id : columnHeadingsIds) {
             TextView colHeading = (TextView) findViewById(id);
@@ -83,7 +83,7 @@ public class ListActivity extends AppCompatActivity {
                 public void onClick(View view) {
                     TextView textView = (TextView) view;
                     String newSortType = textView.getText().toString();
-                    if (newSortType.equals("Title") || newSortType.equals("Orator") || newSortType.equals("Year")) {
+                    if (newSortType.equals("Title") || newSortType.equals("Orator") || newSortType.equals("Year") || newSortType.equals("Length")) {
                         sortType = newSortType;
                         buildSpeechTable();
                     } else {

@@ -164,6 +164,7 @@ public class PlayerActivity extends AppCompatActivity {
                     if (totalMillis != 0) {
                         timeElapsed = getResources().getString(R.string.time_elapsed) + " " + elpasedTime + " / " + totalTime;
                     } else {
+                        // display "loading" message until we have loaded the speech
                         timeElapsed = getResources().getString(R.string.loading);
                     }
                     progressTextView.setText(timeElapsed);

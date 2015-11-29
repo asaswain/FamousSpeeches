@@ -15,8 +15,9 @@
     <string name="title_col_hdr">Title</string>
     <string name="orator_col_hdr">Orator</string>
     <string name="year_col_hdr">Year</string>
+    <string name="length_col_hdr">Length</string>
 
-    <string name="message_empty">The table has no records.</string>
+    <string name="message_empty">Waiting to load table of speeches...</string>
 
     <string name="help_button">Help</string>
     <string name="help_text">Click on a row in the table to play a speech. Click on a column heading to re-sort the table by that column.</string>
@@ -47,6 +48,7 @@
     <string name="sql_title_column">title</string>
     <string name="sql_orator_column">orator</string>
     <string name="sql_year_column">year</string>
+    <string name="sql_length_column">length</string>
     <string name="title_activity_list">ListActivity</string>
     <string name="title_activity_speech_text">SpeechTextActivity</string>
 </resources>

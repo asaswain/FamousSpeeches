@@ -8,6 +8,10 @@ import android.view.ViewGroup;
 import android.widget.CursorAdapter;
 import android.widget.TextView;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+
 import edu.nyu.scps.SpeechPlayer.R;
 
 /**
@@ -26,20 +30,30 @@ public class SpeechAdapter extends CursorAdapter {
 
     @Override
     public void bindView(View view, Context context, Cursor cursor) {
+        // load data into speech_listview_item XML document
         String oratorColName = context.getResources().getString(R.string.sql_orator_column);
         String titleColName = context.getResources().getString(R.string.sql_title_column);
         String yearColName = context.getResources().getString(R.string.sql_year_column);
+        String lengthColName = context.getResources().getString(R.string.sql_length_column);
 
         String orator = cursor.getString(cursor.getColumnIndex(oratorColName));
         String title = cursor.getString(cursor.getColumnIndex(titleColName));
         String year = cursor.getString(cursor.getColumnIndex(yearColName));
+        String length = cursor.getString(cursor.getColumnIndex(lengthColName));
 
-        TextView textView = (TextView)view.findViewById(R.id.title);
+        // this converts recording length of list item from seconds to a hours:minutes:seconds timestamp
+        Integer lengthInSeconds = Integer.valueOf(length);
+        SimpleDateFormat formatter = new SimpleDateFormat("mm:ss", Locale.getDefault());
+        String lengthTimeStamp = formatter.format(new Date(lengthInSeconds*1000));
+
+        TextView textView = (TextView) view.findViewById(R.id.title);
         textView.setText(title);
-        textView = (TextView)view.findViewById(R.id.orator);
+        textView = (TextView) view.findViewById(R.id.orator);
         textView.setText(orator);
-        textView = (TextView)view.findViewById(R.id.year);
+        textView = (TextView) view.findViewById(R.id.year);
         textView.setText(year);
+        textView = (TextView) view.findViewById(R.id.length);
+        textView.setText(lengthTimeStamp);
     }
 
     @Override
