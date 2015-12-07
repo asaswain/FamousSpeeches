@@ -1,6 +1,4 @@
-# FamousSpeeches
-An Android app that plays recordings of famous US speeches
-
+# Famous US Speeches
 This is an application that plays recordings of famous US political speeches. I picked a sampling of speeches from the 19th and 20th centuries, and plan to add more speeches in future updates. Each speech includes a portrait of the speaker, a copy of the transcript of the speech, and a link to the wikipedia page for the speech (if one exists). To minimize the file size of this applicatio, the speeches are all streamed from the internet, so an internet connection is required to use this application. 
 
 The speech recordings that this application streams comes from the American Rhetoric website:
