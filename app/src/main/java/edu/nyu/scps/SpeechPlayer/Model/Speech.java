@@ -139,19 +139,17 @@ public class Speech {
 
     @Override
     public int hashCode() {
-        int result = title.hashCode();
-        result = 31 * result + orator.hashCode();
-        return result;
+        int hash = 0;
+        if (orator != null && title != null) {
+            hash = (31 * title.hashCode()) + orator.hashCode();
+        }
+        return hash;
     }
 
     // this method is designed to allow a user to generate a hashcode with just a title and an orator,
     // without having to create a new Speech object
     public static int getHashCode(Orator orator, String title) {
-        int hash = 0;
-        if (orator != null && title != null) {
-            Speech dummySpeech = new Speech(title, orator);
-            hash = dummySpeech.hashCode();
-        }
-        return hash;
+        Speech dummySpeech = new Speech(title, orator);
+        return dummySpeech.hashCode();
     }
 }

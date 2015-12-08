@@ -260,7 +260,7 @@ public class PlayerActivity extends AppCompatActivity {
             }
         });
 
-        // listener for speechText button
+        // listener for speech transcript button
         final FancyButton speechTextButton = (FancyButton) findViewById(R.id.speechTextButton);
         speechTextButton.setOnClickListener(new Button.OnClickListener() {
             @Override

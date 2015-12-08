@@ -39,7 +39,6 @@ public class SpeechTextActivity extends AppCompatActivity {
     private String title;
     private String assetTitle;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -52,7 +51,7 @@ public class SpeechTextActivity extends AppCompatActivity {
         if (extras.getString("titleData") != null) {
             title = extras.getString("titleData");
             assetTitle = title;
-            // purge apostraphes from speech title
+            // purge apostrophes from speech title
             if (assetTitle != null) {
                 assetTitle = assetTitle.replace("'", "");
                 assetTitle = assetTitle.replace("’", "");
