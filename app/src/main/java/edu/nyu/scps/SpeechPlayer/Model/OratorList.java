@@ -83,6 +83,8 @@ public class OratorList {
             return oratorList.get(hash);
         } catch (IndexOutOfBoundsException e) {
             return null;
+        } catch (Exception e) {
+            return null;
         }
     }
 }

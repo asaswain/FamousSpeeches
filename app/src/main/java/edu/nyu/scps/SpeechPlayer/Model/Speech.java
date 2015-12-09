@@ -45,12 +45,14 @@ public class Speech {
 
     // copy constructor
     public Speech(Speech other) {
-        this.title = other.title;
-        this.orator = other.orator;
-        this.webRecordingURL = other.webRecordingURL;
-        this.wikipediaURL = other.wikipediaURL;
-        this.year = other.year;
-        this.lengthInSeconds = other.lengthInSeconds;
+        if (other != null) {
+            this.title = other.title;
+            this.orator = other.orator;
+            this.webRecordingURL = other.webRecordingURL;
+            this.wikipediaURL = other.wikipediaURL;
+            this.year = other.year;
+            this.lengthInSeconds = other.lengthInSeconds;
+        }
     }
 
     public Speech(String title, Orator orator) {

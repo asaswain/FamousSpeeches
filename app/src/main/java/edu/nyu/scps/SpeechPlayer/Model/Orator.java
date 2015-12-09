@@ -26,8 +26,10 @@ public class Orator {
 
     // copy constructor
     public Orator(Orator other) {
-        this.fullName = other.fullName;
-        this.portraitURL = other.portraitURL;
+        if (other != null) {
+            this.fullName = other.fullName;
+            this.portraitURL = other.portraitURL;
+        }
     }
 
     public Orator(String subjectName) {
