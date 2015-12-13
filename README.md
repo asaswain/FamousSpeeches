@@ -1,13 +1,13 @@
 # Famous US Speeches
-This is an application that plays recordings of famous US political speeches. I picked a sampling of speeches from the 19th and 20th centuries, and plan to add more speeches in future updates. Each speech includes a portrait of the speaker, a copy of the transcript of the speech, and a link to the wikipedia page for the speech (if one exists). To minimize the file size of this applicatio, the speeches are all streamed from the internet, so an internet connection is required to use this application. 
+This is application plays recordings of famous US political speeches. I picked a sampling of speeches by political figures from the 19th and 20th centuries, and plan to add more speeches in future updates. Each speech includes a portrait of the speaker, a copy of the transcript of the speech, and a link to the wikipedia page for the speech (if one exists). To minimize the file size of this application, the speeches are all streamed from the internet, so an internet connection is required to use this application.  
 
 The speech recordings that this application streams comes from the American Rhetoric website:
 
 http://www.americanrhetoric.com
 
-The images that this application uses come from Wikipedia.
+The images that this application uses come from Wikipedia. 
 
-This application uses the following license for all content:
+All other content is covered under the following license:
 
 GNU GENERAL PUBLIC LICENSE
 ==========================
