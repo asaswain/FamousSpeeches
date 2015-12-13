@@ -8,6 +8,7 @@ import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -118,6 +119,12 @@ public class PlayerActivity extends AppCompatActivity {
         volumeSeekBar = (SeekBar)findViewById(R.id.volumeSeekBar);
         progressSeekBar = (SeekBar)findViewById(R.id.progressSeekBar);
         progressTextView = (TextView) findViewById(R.id.timeElapsed);
+
+        // set background colors and slider images for progress and volume seekbars
+        volumeSeekBar.setProgressDrawable(ContextCompat.getDrawable(this, R.drawable.seek_bar));
+        progressSeekBar.setProgressDrawable(ContextCompat.getDrawable(this, R.drawable.seek_bar));
+        volumeSeekBar.setThumb(ContextCompat.getDrawable(this, R.drawable.seek_bar_thumb));
+        progressSeekBar.setThumb(ContextCompat.getDrawable(this, R.drawable.seek_bar_thumb));
 
         volumeSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override

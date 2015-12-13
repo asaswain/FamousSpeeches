@@ -8,7 +8,7 @@
 
     <application
         android:allowBackup="true"
-        android:icon="@drawable/paperscroll"
+        android:icon="@drawable/scroll_icon"
         android:label="@string/app_name"
         android:largeHeap="true">
         <activity
