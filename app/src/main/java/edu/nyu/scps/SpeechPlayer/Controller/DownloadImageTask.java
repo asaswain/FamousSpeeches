@@ -28,34 +28,47 @@ import java.io.InputStream;
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  * This class downloads and image from a website URL and converts it to a black & white image
+ * storing the image in the ImageView bitmapImage variable
  */
 public class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
-    ImageView bmImage;
+    ImageView bitmapImage;
 
-    public DownloadImageTask(ImageView bmImage) {
-        this.bmImage = bmImage;
+    // constructor
+    public DownloadImageTask(ImageView bitmapsImage) {
+        this.bitmapImage = bitmapsImage;
     }
 
+
+    /**
+     * This method overrides the doInBackground method from AsyncTask
+     * @param urls - an array containing a single HTTP URL to load
+     * @return Bitmap image generated from URL
+     */
     protected Bitmap doInBackground(String... urls) {
         String urldisplay = urls[0];
-        Bitmap mIcon11 = null;
+        Bitmap newImage = null;
         try {
             InputStream in = new java.net.URL(urldisplay).openStream();
-            mIcon11 = BitmapFactory.decodeStream(in);
+            newImage = BitmapFactory.decodeStream(in);
         } catch (Exception e) {
             Log.e("Error", e.getMessage());
             e.printStackTrace();
         }
-        return mIcon11;
+        return newImage;
     }
 
+    /**
+     * This method is called automatically when doInBackground finishes
+     * and it load the image into the class bitmapImage bitmap and changes the image to be black and white
+     * @param result - the Bitmap images generated from the URL
+     */
     protected void onPostExecute(Bitmap result) {
-        // this code forces us to display the image in black & white
+        // this code creates a filter to display the image in black & white
         ColorMatrix matrix = new ColorMatrix();
         matrix.setSaturation(0);
         ColorMatrixColorFilter filter = new ColorMatrixColorFilter(matrix);
 
-        bmImage.setImageBitmap(result);
-        bmImage.setColorFilter(filter);
+        bitmapImage.setImageBitmap(result);
+        bitmapImage.setColorFilter(filter);
     }
 }

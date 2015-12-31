@@ -44,6 +44,7 @@ public class SpeechSQLHelper extends SQLiteOpenHelper {
     private final String yearColName;
     private final String lengthColName;
 
+    // constructor
     public SpeechSQLHelper(Context context, String name) {
         super(context, name, null, 1);
         this.context = context;
@@ -54,6 +55,7 @@ public class SpeechSQLHelper extends SQLiteOpenHelper {
         lengthColName = context.getResources().getString(R.string.sql_length_column);
     }
 
+    // only called when SQL database is missing
     @Override
     public void onCreate(SQLiteDatabase db) {
         String createTable = "CREATE TABLE " + speechTableName + " ("
