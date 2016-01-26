@@ -1,4 +1,4 @@
-package org.swain.asa.SpeechPlayer.Controller;
+package org.swain.asa.famous_pres_speeches.Controller;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -8,11 +8,12 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
+import org.swain.asa.famous_pres_speeches.Model.Speech;
+import org.swain.asa.famous_pres_speeches.Model.SpeechList;
+
 import java.util.HashMap;
 
-import org.swain.asa.SpeechPlayer.Model.Speech;
-import org.swain.asa.SpeechPlayer.Model.SpeechList;
-import org.swain.asa.SpeechPlayer.R;
+import org.swain.asa.famous_pres_speeches.R;
 
 /**
  * Famous US Speeches Android Application

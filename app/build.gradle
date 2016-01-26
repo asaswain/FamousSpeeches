@@ -5,7 +5,7 @@ android {
     buildToolsVersion "23.0.2"
 
     defaultConfig {
-        applicationId "org.swain.asa.SpeechPlayer"
+        applicationId "org.swain.asa.famous_pres_speeches"
         minSdkVersion 16
         targetSdkVersion 23
         versionCode 1

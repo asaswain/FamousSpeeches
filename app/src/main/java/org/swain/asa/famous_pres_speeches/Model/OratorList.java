@@ -1,4 +1,4 @@
-package org.swain.asa.SpeechPlayer.Model;
+package org.swain.asa.famous_pres_speeches.Model;
 
 import android.content.Context;
 
@@ -8,7 +8,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.HashMap;
 
-import org.swain.asa.SpeechPlayer.R;
+import org.swain.asa.famous_pres_speeches.R;
 
 /**
  * Famous US Speeches Android Application

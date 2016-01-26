@@ -1,4 +1,4 @@
-package org.swain.asa.SpeechPlayer.Model;
+package org.swain.asa.famous_pres_speeches.Model;
 
 /**
  * Famous US Speeches Android Application

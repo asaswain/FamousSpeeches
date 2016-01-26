@@ -1,4 +1,4 @@
-package org.swain.asa.SpeechPlayer.Controller;
+package org.swain.asa.famous_pres_speeches.Controller;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;

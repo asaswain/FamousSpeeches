@@ -1,4 +1,4 @@
-package org.swain.asa.SpeechPlayer.View;
+package org.swain.asa.famous_pres_speeches.View;
 
 import android.content.Context;
 import android.database.Cursor;
@@ -12,7 +12,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
-import org.swain.asa.SpeechPlayer.R;
+import org.swain.asa.famous_pres_speeches.R;
 
 /**
  * Famous US Speeches Android Application

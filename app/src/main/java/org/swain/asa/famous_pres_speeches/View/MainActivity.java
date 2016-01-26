@@ -1,4 +1,4 @@
-package org.swain.asa.SpeechPlayer.View;
+package org.swain.asa.famous_pres_speeches.View;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -8,8 +8,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 
-import org.swain.asa.SpeechPlayer.Controller.DownloadImageTask;
-import org.swain.asa.SpeechPlayer.R;
+import org.swain.asa.famous_pres_speeches.Controller.DownloadImageTask;
+import org.swain.asa.famous_pres_speeches.R;
 
 /**
  * Famous US Speeches Android Application

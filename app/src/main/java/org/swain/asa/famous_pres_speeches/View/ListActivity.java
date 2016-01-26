@@ -1,4 +1,4 @@
-package org.swain.asa.SpeechPlayer.View;
+package org.swain.asa.famous_pres_speeches.View;
 
 import android.content.Intent;
 import android.database.Cursor;
@@ -15,10 +15,10 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import org.swain.asa.SpeechPlayer.Controller.SpeechSQLHelper;
-import org.swain.asa.SpeechPlayer.Model.CurrentlyPlaying;
-import org.swain.asa.SpeechPlayer.Model.Speech;
-import org.swain.asa.SpeechPlayer.R;
+import org.swain.asa.famous_pres_speeches.Controller.SpeechSQLHelper;
+import org.swain.asa.famous_pres_speeches.Model.CurrentlyPlaying;
+import org.swain.asa.famous_pres_speeches.Model.Speech;
+import org.swain.asa.famous_pres_speeches.R;
 import mehdi.sakout.fancybuttons.FancyButton;
 
 /**

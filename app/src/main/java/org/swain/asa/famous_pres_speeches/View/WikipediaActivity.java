@@ -1,4 +1,4 @@
-package org.swain.asa.SpeechPlayer.View;
+package org.swain.asa.famous_pres_speeches.View;
 
 import android.app.ProgressDialog;
 import android.os.Bundle;
@@ -6,7 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
-import org.swain.asa.SpeechPlayer.R;
+import org.swain.asa.famous_pres_speeches.R;
 
 /**
  * Famous US Speeches Android Application

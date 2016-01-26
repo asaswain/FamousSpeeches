@@ -1,4 +1,4 @@
-package org.swain.asa.SpeechPlayer.View;
+package org.swain.asa.famous_pres_speeches.View;
 
 import android.content.res.AssetManager;
 import android.os.Bundle;
@@ -9,9 +9,9 @@ import android.widget.Toast;
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.swain.asa.SpeechPlayer.Model.Speech;
-import org.swain.asa.SpeechPlayer.Model.SpeechList;
-import org.swain.asa.SpeechPlayer.R;
+import org.swain.asa.famous_pres_speeches.Model.Speech;
+import org.swain.asa.famous_pres_speeches.Model.SpeechList;
+import org.swain.asa.famous_pres_speeches.R;
 
 /**
  * Famous US Speeches Android Application

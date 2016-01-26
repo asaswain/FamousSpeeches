@@ -1,6 +1,6 @@
-package org.swain.asa.SpeechPlayer.Model;
+package org.swain.asa.famous_pres_speeches.Model;
 
-import org.swain.asa.SpeechPlayer.Controller.MediaPlayerService;
+import org.swain.asa.famous_pres_speeches.Controller.MediaPlayerService;
 
 /**
  * Famous US Speeches Android Application

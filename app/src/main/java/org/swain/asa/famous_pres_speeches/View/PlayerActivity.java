@@ -1,4 +1,4 @@
-package org.swain.asa.SpeechPlayer.View;
+package org.swain.asa.famous_pres_speeches.View;
 
 import android.app.ActivityManager;
 import android.content.ComponentName;
@@ -24,12 +24,12 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.TimeUnit;
 
-import org.swain.asa.SpeechPlayer.Controller.DownloadImageTask;
-import org.swain.asa.SpeechPlayer.Controller.MediaPlayerService;
-import org.swain.asa.SpeechPlayer.Model.CurrentlyPlaying;
-import org.swain.asa.SpeechPlayer.Model.Speech;
-import org.swain.asa.SpeechPlayer.Model.SpeechList;
-import org.swain.asa.SpeechPlayer.R;
+import org.swain.asa.famous_pres_speeches.Controller.DownloadImageTask;
+import org.swain.asa.famous_pres_speeches.Controller.MediaPlayerService;
+import org.swain.asa.famous_pres_speeches.Model.CurrentlyPlaying;
+import org.swain.asa.famous_pres_speeches.Model.Speech;
+import org.swain.asa.famous_pres_speeches.Model.SpeechList;
+import org.swain.asa.famous_pres_speeches.R;
 import mehdi.sakout.fancybuttons.FancyButton;
 
 /**
