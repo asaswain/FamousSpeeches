@@ -117,6 +117,16 @@ public class ListActivity extends AppCompatActivity {
                 Toast.makeText(getApplicationContext(), R.string.help_text, Toast.LENGTH_LONG).show();
             }
         });
+
+        // set listener for Credits button
+        final FancyButton creditsButton = (FancyButton) findViewById(R.id.creditsButton);
+        creditsButton.setOnClickListener(new Button.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getBaseContext(), CreditsActivity.class);
+                startActivity(intent);
+            }
+        });
     }
 
     @Override

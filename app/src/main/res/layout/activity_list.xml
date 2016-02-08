@@ -124,23 +124,53 @@
             android:layout_marginTop="5dp"
             android:layout_marginBottom="15dp"/>
 
-        <!-- Help button -->
-
-        <mehdi.sakout.fancybuttons.FancyButton
-            android:id="@+id/helpButton"
-            android:layout_gravity="center_horizontal"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingBottom="10dp"
-            android:paddingLeft="20dp"
-            android:paddingRight="20dp"
-            android:paddingTop="10dp"
-            fancy:fb_borderColor="#FFFFFF"
-            fancy:fb_borderWidth="1dp"
-            fancy:fb_radius="30dp"
-            fancy:fb_defaultColor="@color/dark_red"
-            fancy:fb_textColor="@color/white"
-            fancy:fb_text="@string/help_button"/>
+            android:orientation="horizontal"
+            android:gravity="center_horizontal">
+
+            <!-- Help button -->
+
+            <mehdi.sakout.fancybuttons.FancyButton
+                android:id="@+id/helpButton"
+                android:layout_gravity="center_horizontal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingBottom="10dp"
+                android:paddingLeft="20dp"
+                android:paddingRight="20dp"
+                android:paddingTop="10dp"
+                android:layout_marginRight="20dp"
+                android:layout_marginEnd="20dp"
+                fancy:fb_borderColor="#FFFFFF"
+                fancy:fb_borderWidth="1dp"
+                fancy:fb_radius="30dp"
+                fancy:fb_defaultColor="@color/dark_red"
+                fancy:fb_textColor="@color/white"
+                fancy:fb_text="@string/help_button"/>
+
+            <!-- Credits button -->
+
+            <mehdi.sakout.fancybuttons.FancyButton
+                android:id="@+id/creditsButton"
+                android:layout_gravity="center_horizontal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingBottom="10dp"
+                android:paddingLeft="20dp"
+                android:paddingRight="20dp"
+                android:paddingTop="10dp"
+                android:layout_marginLeft="20dp"
+                android:layout_marginStart="20dp"
+                fancy:fb_borderColor="#FFFFFF"
+                fancy:fb_borderWidth="1dp"
+                fancy:fb_radius="30dp"
+                fancy:fb_defaultColor="@color/dark_red"
+                fancy:fb_textColor="@color/white"
+                fancy:fb_text="@string/credits_button"/>
+
+        </LinearLayout>
 
     </LinearLayout>
 
