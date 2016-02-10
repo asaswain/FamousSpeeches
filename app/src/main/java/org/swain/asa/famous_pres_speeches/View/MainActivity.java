@@ -2,6 +2,7 @@ package org.swain.asa.famous_pres_speeches.View;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -33,6 +34,8 @@ import org.swain.asa.famous_pres_speeches.R;
 
 public class MainActivity extends AppCompatActivity {
 
+    private Handler mHandler = new Handler();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -40,6 +43,14 @@ public class MainActivity extends AppCompatActivity {
 
         // load capitol image
         loadTitleImage();
+
+        // load list page automatically after a short delay
+        mHandler.postDelayed(new Runnable() {
+            public void run() {
+                Intent intent = new Intent(getBaseContext(), ListActivity.class);
+                startActivity(intent);
+            }
+        }, 5000);
 
         // set listener for capitol image, to go to list of speeches
         ImageView capitol = (ImageView) findViewById(R.id.capitol);

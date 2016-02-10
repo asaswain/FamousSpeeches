@@ -10,6 +10,7 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -19,17 +20,18 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
-import java.util.concurrent.TimeUnit;
-
 import org.swain.asa.famous_pres_speeches.Controller.DownloadImageTask;
 import org.swain.asa.famous_pres_speeches.Controller.MediaPlayerService;
 import org.swain.asa.famous_pres_speeches.Model.CurrentlyPlaying;
 import org.swain.asa.famous_pres_speeches.Model.Speech;
 import org.swain.asa.famous_pres_speeches.Model.SpeechList;
 import org.swain.asa.famous_pres_speeches.R;
+
+import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.concurrent.TimeUnit;
+
 import mehdi.sakout.fancybuttons.FancyButton;
 
 /**
@@ -73,7 +75,7 @@ public class PlayerActivity extends AppCompatActivity {
             MediaPlayerService.MediaPlayerBinder binder = (MediaPlayerService.MediaPlayerBinder) service;
             mediaPlayerService = binder.getService();
             isBound = true;
-            volumeSeekBar.setProgress((int) (mediaPlayerService.getVolume() * volumeSeekBar.getMax()));
+            volumeSeekBar.setProgress(CurrentlyPlaying.getCurrentVolume());
         }
 
         @Override
@@ -129,10 +131,7 @@ public class PlayerActivity extends AppCompatActivity {
         volumeSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                if (mediaPlayerService != null) {
-                    float volume = progress / (float) seekBar.getMax();
-                    mediaPlayerService.setVolume(volume);
-                }
+                CurrentlyPlaying.setCurrentVolume(progress);
             }
 
             @Override
@@ -177,6 +176,13 @@ public class PlayerActivity extends AppCompatActivity {
                             TimeUnit.MILLISECONDS.toMinutes(elapsedMillis),
                             TimeUnit.MILLISECONDS.toSeconds(elapsedMillis) - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(elapsedMillis))
                     );
+
+                    //Double d = mediaPlayerService.getVolume() * volumeSeekBar.getMax();
+                    //int a = d.intValue();
+                    //int b = CurrentlyPlaying.getCurrentVolume();
+                    //if (a != b) {
+                    setMediaPlayerVolume(CurrentlyPlaying.getCurrentVolume());
+                    //}
 
                     int totalMillis = mediaPlayerService.getDuration();
                     String totalTime = String.format("%02d:%02d",
@@ -400,5 +406,20 @@ public class PlayerActivity extends AppCompatActivity {
     private void loadPortrait(Speech mySpeech) {
         String url = mySpeech.getPortraitURL();
         new DownloadImageTask((ImageView) findViewById(R.id.portrait)).execute(url);
+    }
+
+    /**
+     * Set volume of mediaPlayerService
+     * @param volume - integer of current volume
+     */
+    private void setMediaPlayerVolume(int volume) {
+        volumeSeekBar = (SeekBar)findViewById(R.id.volumeSeekBar);
+        if (mediaPlayerService != null) {
+            float volumePercentage = volume / (float) volumeSeekBar.getMax();
+            mediaPlayerService.setVolume(volumePercentage);
+            Log.d("Volume", ""+volume);
+        } else {
+            Log.d("Volume", "fail "+volume);
+        }
     }
 }

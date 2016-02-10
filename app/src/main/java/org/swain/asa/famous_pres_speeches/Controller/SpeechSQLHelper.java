@@ -10,10 +10,9 @@ import android.util.Log;
 
 import org.swain.asa.famous_pres_speeches.Model.Speech;
 import org.swain.asa.famous_pres_speeches.Model.SpeechList;
+import org.swain.asa.famous_pres_speeches.R;
 
 import java.util.HashMap;
-
-import org.swain.asa.famous_pres_speeches.R;
 
 /**
  * Famous US Speeches Android Application
@@ -102,7 +101,7 @@ public class SpeechSQLHelper extends SQLiteOpenHelper {
      * @param sortType String to indicate what item to sort by, either Title, Orator, or Year
      * @return cursor object
      */
-    public Cursor getCursor(String sortType) {
+    public Cursor getCursor(String sortType, Boolean isSortOrderDescending) {
         SQLiteDatabase db = getReadableDatabase();
         //can say "_id, name" instead of "*", but _id must be included.
         String sqlQuery = "SELECT _id, " + oratorColName + ", " + titleColName + ", " + yearColName + ", " + lengthColName + " FROM " + speechTableName;
@@ -120,6 +119,11 @@ public class SpeechSQLHelper extends SQLiteOpenHelper {
             default:
                 sqlQuery += " ORDER BY " + yearColName;
                 break;
+        }
+
+        // if not ascending, sort data in descending order
+        if (isSortOrderDescending) {
+            sqlQuery += " DESC";
         }
 
         Cursor cursor = db.rawQuery(sqlQuery, null);

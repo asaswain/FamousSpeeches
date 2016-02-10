@@ -26,6 +26,7 @@ public class CurrentlyPlaying {
 
     static private Speech currentlyPlayingSpeech = null;
     static private MediaPlayerService currentlyPlayingService = null;
+    static private int currentVolume = 50;
 
     public static Speech getCurrentlyPlayingSpeech() {
         return currentlyPlayingSpeech;
@@ -41,5 +42,13 @@ public class CurrentlyPlaying {
 
     public static void setCurrentlyPlayingService(MediaPlayerService currentlyPlayingService) {
         CurrentlyPlaying.currentlyPlayingService = currentlyPlayingService;
+    }
+
+    public static int getCurrentVolume() {
+        return currentVolume;
+    }
+
+    public static void setCurrentVolume(int currentVolume) {
+        CurrentlyPlaying.currentVolume = currentVolume;
     }
 }

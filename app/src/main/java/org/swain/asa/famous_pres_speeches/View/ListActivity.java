@@ -51,6 +51,9 @@ public class ListActivity extends AppCompatActivity {
     //private SimpleCursorAdapter adapter;
     private ListView listView;
     private String sortType = "Title";
+    // if user clicks on the same sort heading twice then change the sort order from ascending to descending
+    private String oldSortType = "";
+    private boolean isSortOrderDescending = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -101,6 +104,9 @@ public class ListActivity extends AppCompatActivity {
                     String newSortType = textView.getText().toString();
                     if (newSortType.equals("Title") || newSortType.equals("Orator") || newSortType.equals("Year") || newSortType.equals("Length")) {
                         sortType = newSortType;
+                        // if user clicks on save sort type twice, reverse sort order
+                        isSortOrderDescending = (sortType.equals(oldSortType) && !isSortOrderDescending);
+                        oldSortType = sortType;
                         buildSpeechTable();
                     } else {
                         // invalid sort type, do nothing
@@ -168,7 +174,7 @@ public class ListActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(SQLiteDatabase db) {
             ListActivity.this.db = db;
-            Cursor cursor = helper.getCursor(sortType);
+            Cursor cursor = helper.getCursor(sortType, isSortOrderDescending);
             adapter = new SpeechAdapter(ListActivity.this, cursor, 0);
             listView.setAdapter(adapter);
             adapter.swapCursor(cursor);
