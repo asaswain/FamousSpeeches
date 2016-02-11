@@ -66,7 +66,7 @@ public class PlayerActivity extends AppCompatActivity {
     private String title;
     // speech record currently loaded
     private Speech mySpeech;
-
+    private int volumeUpdateCounter;
 
     private ServiceConnection serviceConnection = new ServiceConnection() {
         @Override
@@ -76,6 +76,7 @@ public class PlayerActivity extends AppCompatActivity {
             mediaPlayerService = binder.getService();
             isBound = true;
             volumeSeekBar.setProgress(CurrentlyPlaying.getCurrentVolume());
+            volumeUpdateCounter = 3;
         }
 
         @Override
@@ -132,6 +133,7 @@ public class PlayerActivity extends AppCompatActivity {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 CurrentlyPlaying.setCurrentVolume(progress);
+                volumeUpdateCounter = 3;
             }
 
             @Override
@@ -177,12 +179,24 @@ public class PlayerActivity extends AppCompatActivity {
                             TimeUnit.MILLISECONDS.toSeconds(elapsedMillis) - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(elapsedMillis))
                     );
 
-                    //Double d = mediaPlayerService.getVolume() * volumeSeekBar.getMax();
-                    //int a = d.intValue();
-                    //int b = CurrentlyPlaying.getCurrentVolume();
-                    //if (a != b) {
-                    setMediaPlayerVolume(CurrentlyPlaying.getCurrentVolume());
-                    //}
+                    // this code sets the volume 3 times, because for some reason it doesn't always take
+                    // the first time I change the MediaPlayer volume when starting a speech
+                    if (volumeUpdateCounter > 0) {
+                        Double tmpD = mediaPlayerService.getVolume() * volumeSeekBar.getMax();
+                        int oldVolume = tmpD.intValue();
+                        int newVolume = CurrentlyPlaying.getCurrentVolume();
+                        if (newVolume != oldVolume) {
+                            setMediaPlayerVolume(newVolume);
+                        }
+                        volumeUpdateCounter -= 1;
+                    } else {
+                        Double tmpD = mediaPlayerService.getVolume() * volumeSeekBar.getMax();
+                        int newestVolume = tmpD.intValue();
+                        CurrentlyPlaying.setCurrentVolume(newestVolume);
+                        volumeUpdateCounter -= 1;
+                    }
+                    // this is the alternativem to constantly update the volume
+                    //setMediaPlayerVolume(CurrentlyPlaying.getCurrentVolume());
 
                     int totalMillis = mediaPlayerService.getDuration();
                     String totalTime = String.format("%02d:%02d",

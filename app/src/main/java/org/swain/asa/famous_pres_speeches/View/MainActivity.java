@@ -35,6 +35,7 @@ import org.swain.asa.famous_pres_speeches.R;
 public class MainActivity extends AppCompatActivity {
 
     private Handler mHandler = new Handler();
+    private boolean isListActivityNotLoaded;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,23 +45,39 @@ public class MainActivity extends AppCompatActivity {
         // load capitol image
         loadTitleImage();
 
-        // load list page automatically after a short delay
-        mHandler.postDelayed(new Runnable() {
-            public void run() {
-                Intent intent = new Intent(getBaseContext(), ListActivity.class);
-                startActivity(intent);
-            }
-        }, 5000);
-
         // set listener for capitol image, to go to list of speeches
         ImageView capitol = (ImageView) findViewById(R.id.capitol);
         capitol.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(getBaseContext(), ListActivity.class);
-                startActivity(intent);
+                loadListActivity();
             }
         });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        isListActivityNotLoaded = true;
+
+        // load list page automatically after a short delay
+        mHandler.postDelayed(new Runnable() {
+            public void run() {
+                loadListActivity();
+            }
+        }, 5000);
+    }
+
+    /**
+     * Load ListActivity screen
+     */
+    private void loadListActivity() {
+        // this is to keep the ListActivity from loading twice if user clicks on screen
+        if (isListActivityNotLoaded) {
+            Intent intent = new Intent(getBaseContext(), ListActivity.class);
+            startActivity(intent);
+            isListActivityNotLoaded = false;
+        }
     }
 
     /**
