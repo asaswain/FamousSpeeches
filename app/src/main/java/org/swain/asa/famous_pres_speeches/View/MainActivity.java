@@ -4,11 +4,16 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
+
+import org.swain.asa.famous_pres_speeches.AnalyticsApplication;
 import org.swain.asa.famous_pres_speeches.Controller.DownloadImageTask;
 import org.swain.asa.famous_pres_speeches.R;
 
@@ -37,6 +42,10 @@ public class MainActivity extends AppCompatActivity {
     private Handler mHandler = new Handler();
     private boolean isListActivityNotLoaded;
 
+    // Google Analytics
+    private Tracker mTracker;
+    private static final String activityName = ListActivity.class.getSimpleName();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -53,6 +62,11 @@ public class MainActivity extends AppCompatActivity {
                 loadListActivity();
             }
         });
+
+        // Google Analytics code
+        // Obtain the shared Tracker instance.
+        AnalyticsApplication application = (AnalyticsApplication) getApplication();
+        mTracker = application.getDefaultTracker();
     }
 
     @Override
@@ -66,6 +80,11 @@ public class MainActivity extends AppCompatActivity {
                 loadListActivity();
             }
         }, 5000);
+
+        // Google Analytics code
+        Log.i(activityName, "Setting screen name: " + activityName);
+        mTracker.setScreenName(activityName);
+        mTracker.send(new HitBuilders.ScreenViewBuilder().build());
     }
 
     /**

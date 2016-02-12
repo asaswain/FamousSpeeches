@@ -20,6 +20,10 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
+
+import org.swain.asa.famous_pres_speeches.AnalyticsApplication;
 import org.swain.asa.famous_pres_speeches.Controller.DownloadImageTask;
 import org.swain.asa.famous_pres_speeches.Controller.MediaPlayerService;
 import org.swain.asa.famous_pres_speeches.Model.CurrentlyPlaying;
@@ -67,6 +71,10 @@ public class PlayerActivity extends AppCompatActivity {
     // speech record currently loaded
     private Speech mySpeech;
     private int volumeUpdateCounter;
+
+    // Google Analytics
+    private Tracker mTracker;
+    private static final String activityName = ListActivity.class.getSimpleName();
 
     private ServiceConnection serviceConnection = new ServiceConnection() {
         @Override
@@ -182,17 +190,15 @@ public class PlayerActivity extends AppCompatActivity {
                     // this code sets the volume 3 times, because for some reason it doesn't always take
                     // the first time I change the MediaPlayer volume when starting a speech
                     if (volumeUpdateCounter > 0) {
-                        Double tmpD = mediaPlayerService.getVolume() * volumeSeekBar.getMax();
-                        int oldVolume = tmpD.intValue();
-                        int newVolume = CurrentlyPlaying.getCurrentVolume();
-                        if (newVolume != oldVolume) {
-                            setMediaPlayerVolume(newVolume);
+                        int currentVolume = new Double(mediaPlayerService.getVolume() * volumeSeekBar.getMax()).intValue();
+                        if (currentVolume != CurrentlyPlaying.getCurrentVolume()) {
+                            setMediaPlayerVolume(currentVolume);
                         }
-                        volumeUpdateCounter -= 1;
-                    } else {
-                        Double tmpD = mediaPlayerService.getVolume() * volumeSeekBar.getMax();
-                        int newestVolume = tmpD.intValue();
-                        CurrentlyPlaying.setCurrentVolume(newestVolume);
+                        if (volumeUpdateCounter == 1) {
+                            // finally, update the saved volume with the current volume level
+                            currentVolume = new Double(mediaPlayerService.getVolume() * volumeSeekBar.getMax()).intValue();
+                            CurrentlyPlaying.setCurrentVolume(currentVolume);
+                        }
                         volumeUpdateCounter -= 1;
                     }
                     // this is the alternativem to constantly update the volume
@@ -310,6 +316,20 @@ public class PlayerActivity extends AppCompatActivity {
             }
         });
 
+        // Google Analytics code
+        // Obtain the shared Tracker instance.
+        AnalyticsApplication application = (AnalyticsApplication) getApplication();
+        mTracker = application.getDefaultTracker();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        // Google Analytics code
+        Log.i(activityName, "Setting screen name: " + activityName);
+        mTracker.setScreenName(activityName);
+        mTracker.send(new HitBuilders.ScreenViewBuilder().build());
     }
 
     //Is the MediaPlayerService already running?

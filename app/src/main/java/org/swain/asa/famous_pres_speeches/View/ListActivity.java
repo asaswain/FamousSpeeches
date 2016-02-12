@@ -6,6 +6,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -15,10 +16,15 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
+
+import org.swain.asa.famous_pres_speeches.AnalyticsApplication;
 import org.swain.asa.famous_pres_speeches.Controller.SpeechSQLHelper;
 import org.swain.asa.famous_pres_speeches.Model.CurrentlyPlaying;
 import org.swain.asa.famous_pres_speeches.Model.Speech;
 import org.swain.asa.famous_pres_speeches.R;
+
 import mehdi.sakout.fancybuttons.FancyButton;
 
 /**
@@ -54,6 +60,10 @@ public class ListActivity extends AppCompatActivity {
     // if user clicks on the same sort heading twice then change the sort order from ascending to descending
     private String oldSortType = "";
     private boolean isSortOrderDescending = true;
+
+    // Google Analytics
+    private Tracker mTracker;
+    private static final String activityName = ListActivity.class.getSimpleName();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -133,6 +143,11 @@ public class ListActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+
+        // Google Analytics code
+        // Obtain the shared Tracker instance.
+        AnalyticsApplication application = (AnalyticsApplication) getApplication();
+        mTracker = application.getDefaultTracker();
     }
 
     @Override
@@ -155,6 +170,11 @@ public class ListActivity extends AppCompatActivity {
                 }
             });
         }
+
+        // Google Analytics code
+        Log.i(activityName, "Setting screen name: " + activityName);
+        mTracker.setScreenName(activityName);
+        mTracker.send(new HitBuilders.ScreenViewBuilder().build());
     }
 
     /**
