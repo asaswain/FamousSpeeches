@@ -23,7 +23,7 @@ import android.widget.Toast;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
 
-import org.swain.asa.famous_pres_speeches.AnalyticsApplication;
+import org.swain.asa.famous_pres_speeches.PresSpeechApplication;
 import org.swain.asa.famous_pres_speeches.Controller.DownloadImageTask;
 import org.swain.asa.famous_pres_speeches.Controller.MediaPlayerService;
 import org.swain.asa.famous_pres_speeches.Model.CurrentlyPlaying;
@@ -74,7 +74,7 @@ public class PlayerActivity extends AppCompatActivity {
 
     // Google Analytics
     private Tracker mTracker;
-    private static final String activityName = ListActivity.class.getSimpleName();
+    private final static String activityName = PlayerActivity.class.getSimpleName();
 
     private ServiceConnection serviceConnection = new ServiceConnection() {
         @Override
@@ -252,8 +252,14 @@ public class PlayerActivity extends AppCompatActivity {
                 if (isMyServiceRunning()) {
                     if (mediaPlayerService.isSpeechPlaying()) {
                         mediaPlayerService.pausePlayback();
+                        // Google Analytics code
+                        PresSpeechApplication application = (PresSpeechApplication) getApplication();
+                        application.logGoogleAnalysticsEvent(activityName, "PauseButton", orator + "/" + title);
                     } else {
                         mediaPlayerService.startPlayback();
+                        // Google Analytics code
+                        PresSpeechApplication application = (PresSpeechApplication) getApplication();
+                        application.logGoogleAnalysticsEvent(activityName, "StartButton", orator + "/" + title);
                     }
                 }
             }
@@ -267,6 +273,9 @@ public class PlayerActivity extends AppCompatActivity {
                 if (isMyServiceRunning()) {
                     pausePlayButton.setText(getResources().getString(R.string.play_button));
                     mediaPlayerService.stopPlayback();
+                    // Google Analytics code
+                    PresSpeechApplication application = (PresSpeechApplication) getApplication();
+                    application.logGoogleAnalysticsEvent(activityName, "StopButton", orator + "/" + title);
                 }
             }
         });
@@ -278,6 +287,9 @@ public class PlayerActivity extends AppCompatActivity {
                 if (isMyServiceRunning()) {
                     int timeInSeconds = 15;
                     mediaPlayerService.rewindPlayback(timeInSeconds);
+                    // Google Analytics code
+                    PresSpeechApplication application = (PresSpeechApplication) getApplication();
+                    application.logGoogleAnalysticsEvent(activityName, "RewindButton", orator + "/" + title);
                 }
             }
         });
@@ -289,6 +301,9 @@ public class PlayerActivity extends AppCompatActivity {
                 if (isMyServiceRunning()) {
                     int timeInSeconds = 15;
                     mediaPlayerService.fastForwardPlayback(timeInSeconds);
+                    // Google Analytics code
+                    PresSpeechApplication application = (PresSpeechApplication) getApplication();
+                    application.logGoogleAnalysticsEvent(activityName, "FastForwardButton", orator + "/" + title);
                 }
             }
         });
@@ -302,6 +317,9 @@ public class PlayerActivity extends AppCompatActivity {
                 intent.putExtra("oratorData", mySpeech.getOrator().getFullName());
                 intent.putExtra("titleData", mySpeech.getTitle());
                 startActivity(intent);
+                // Google Analytics code
+                PresSpeechApplication application = (PresSpeechApplication) getApplication();
+                application.logGoogleAnalysticsEvent(activityName, "WikipediaButton", orator + "/" + title);
             }
         });
 
@@ -313,13 +331,17 @@ public class PlayerActivity extends AppCompatActivity {
                 Intent intent = new Intent(getBaseContext(), WikipediaActivity.class);
                 intent.putExtra("wikipediaURL", mySpeech.getWikipediaURL());
                 startActivity(intent);
+                // Google Analytics code
+                PresSpeechApplication application = (PresSpeechApplication) getApplication();
+                application.logGoogleAnalysticsEvent(activityName, "TranscriptButton", orator + "/" + title);
             }
         });
 
         // Google Analytics code
         // Obtain the shared Tracker instance.
-        AnalyticsApplication application = (AnalyticsApplication) getApplication();
+        PresSpeechApplication application = (PresSpeechApplication) getApplication();
         mTracker = application.getDefaultTracker();
+        application.logGoogleAnalysticsEvent(activityName, "StartButton", orator + "/" + title);
     }
 
     @Override

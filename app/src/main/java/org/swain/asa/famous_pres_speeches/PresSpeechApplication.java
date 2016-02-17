@@ -19,13 +19,14 @@ package org.swain.asa.famous_pres_speeches;
 import android.app.Application;
 
 import com.google.android.gms.analytics.GoogleAnalytics;
+import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
 
 /**
  * This is a subclass of {@link Application} used to provide shared objects for this app, such as
  * the {@link Tracker}.
  */
-public class AnalyticsApplication extends Application {
+public class PresSpeechApplication extends Application {
     private Tracker mTracker;
 
     /**
@@ -39,5 +40,19 @@ public class AnalyticsApplication extends Application {
             mTracker = analytics.newTracker(R.xml.global_tracker);
         }
         return mTracker;
+    }
+
+    /**
+     * Log event in Google Analytics API
+     * @param className - name of class currently being run
+     * @param action - action being performed
+     * @param label - information about the associated action
+     */
+    synchronized public void logGoogleAnalysticsEvent(String className, String action, String label) {
+        mTracker.send(new HitBuilders.EventBuilder()
+                .setCategory(className)
+                .setAction(action)
+                .setLabel(label)
+                .build());
     }
 }

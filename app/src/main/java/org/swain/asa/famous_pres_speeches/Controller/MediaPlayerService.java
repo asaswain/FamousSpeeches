@@ -162,6 +162,7 @@ public class MediaPlayerService extends Service implements AudioManager.OnAudioF
 
     // this starts playing recording
     public void startPlayback() {
+
         AudioManager audioManager = (AudioManager)getSystemService(Context.AUDIO_SERVICE);
         int result = audioManager.requestAudioFocus(this, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN);
         if (result == AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {

@@ -19,7 +19,7 @@ import android.widget.Toast;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
 
-import org.swain.asa.famous_pres_speeches.AnalyticsApplication;
+import org.swain.asa.famous_pres_speeches.PresSpeechApplication;
 import org.swain.asa.famous_pres_speeches.Controller.SpeechSQLHelper;
 import org.swain.asa.famous_pres_speeches.Model.CurrentlyPlaying;
 import org.swain.asa.famous_pres_speeches.Model.Speech;
@@ -63,7 +63,7 @@ public class ListActivity extends AppCompatActivity {
 
     // Google Analytics
     private Tracker mTracker;
-    private static final String activityName = ListActivity.class.getSimpleName();
+    private final static String activityName = ListActivity.class.getSimpleName();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -94,11 +94,17 @@ public class ListActivity extends AppCompatActivity {
                 Cursor cursor = (Cursor) parent.getItemAtPosition(position); //downcast
                 int oratorIndex = cursor.getColumnIndex(getResources().getString(R.string.sql_orator_column));
                 int titleIndex = cursor.getColumnIndex(getResources().getString(R.string.sql_title_column));
+                String orator = cursor.getString(oratorIndex);
+                String title =cursor.getString(titleIndex);
 
                 Intent intent = new Intent(getBaseContext(), PlayerActivity.class);
-                intent.putExtra("oratorData", cursor.getString(oratorIndex));
-                intent.putExtra("titleData", cursor.getString(titleIndex));
+                intent.putExtra("oratorData", orator);
+                intent.putExtra("titleData", title);
                 startActivity(intent);
+
+                // Google Analytics code
+                PresSpeechApplication application = (PresSpeechApplication) getApplication();
+                application.logGoogleAnalysticsEvent(activityName, "SpeechItem", title+"/"+orator);
             }
         });
 
@@ -131,6 +137,9 @@ public class ListActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Toast.makeText(getApplicationContext(), R.string.help_text, Toast.LENGTH_LONG).show();
+                // Google Analytics code
+                PresSpeechApplication application = (PresSpeechApplication) getApplication();
+                application.logGoogleAnalysticsEvent(activityName, "HelpButton", "");
             }
         });
 
@@ -141,12 +150,15 @@ public class ListActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Intent intent = new Intent(getBaseContext(), CreditsActivity.class);
                 startActivity(intent);
+                // Google Analytics code
+                PresSpeechApplication application = (PresSpeechApplication) getApplication();
+                application.logGoogleAnalysticsEvent(activityName, "CreditsButton", "");
             }
         });
 
         // Google Analytics code
         // Obtain the shared Tracker instance.
-        AnalyticsApplication application = (AnalyticsApplication) getApplication();
+        PresSpeechApplication application = (PresSpeechApplication) getApplication();
         mTracker = application.getDefaultTracker();
     }
 
@@ -234,5 +246,18 @@ public class ListActivity extends AppCompatActivity {
         intent.putExtra("oratorData", currentSpeech.getOrator().getFullName());
         intent.putExtra("titleData", currentSpeech.getTitle());
         startActivity(intent);
+    }
+
+    /**
+     * Log event in Google Analytics API
+     * @param action - action being performed
+     * @param label - information about the associated action
+     */
+    private void logGoogleAnalysticsEvent(String action, String label) {
+        mTracker.send(new HitBuilders.EventBuilder()
+                .setCategory("ListActivity")
+                .setAction(action)
+                .setLabel(label)
+                .build());
     }
 }

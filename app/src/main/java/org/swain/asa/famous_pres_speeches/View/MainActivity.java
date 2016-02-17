@@ -13,7 +13,7 @@ import android.widget.ImageView;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
 
-import org.swain.asa.famous_pres_speeches.AnalyticsApplication;
+import org.swain.asa.famous_pres_speeches.PresSpeechApplication;
 import org.swain.asa.famous_pres_speeches.Controller.DownloadImageTask;
 import org.swain.asa.famous_pres_speeches.R;
 
@@ -44,7 +44,7 @@ public class MainActivity extends AppCompatActivity {
 
     // Google Analytics
     private Tracker mTracker;
-    private static final String activityName = ListActivity.class.getSimpleName();
+    private final static String activityName = MainActivity.class.getSimpleName();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,7 +65,7 @@ public class MainActivity extends AppCompatActivity {
 
         // Google Analytics code
         // Obtain the shared Tracker instance.
-        AnalyticsApplication application = (AnalyticsApplication) getApplication();
+        PresSpeechApplication application = (PresSpeechApplication) getApplication();
         mTracker = application.getDefaultTracker();
     }
 

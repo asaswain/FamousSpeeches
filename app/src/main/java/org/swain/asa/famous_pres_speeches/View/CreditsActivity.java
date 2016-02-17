@@ -7,7 +7,7 @@ import android.util.Log;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
 
-import org.swain.asa.famous_pres_speeches.AnalyticsApplication;
+import org.swain.asa.famous_pres_speeches.PresSpeechApplication;
 import org.swain.asa.famous_pres_speeches.R;
 
 /**
@@ -34,7 +34,7 @@ public class CreditsActivity extends AppCompatActivity {
 
     // Google Analytics
     private Tracker mTracker;
-    private static final String activityName = ListActivity.class.getSimpleName();
+    private final static String activityName = CreditsActivity.class.getSimpleName();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,7 +43,7 @@ public class CreditsActivity extends AppCompatActivity {
 
         // Google Analytics code
         // Obtain the shared Tracker instance.
-        AnalyticsApplication application = (AnalyticsApplication) getApplication();
+        PresSpeechApplication application = (PresSpeechApplication) getApplication();
         mTracker = application.getDefaultTracker();
     }
 
@@ -52,7 +52,7 @@ public class CreditsActivity extends AppCompatActivity {
         super.onResume();
 
         // Google Analytics code
-        Log.i(activityName, "Setting screen name: " + activityName);
+        Log.i(getClass().getSimpleName(), "Setting screen name: " + activityName);
         mTracker.setScreenName(activityName);
         mTracker.send(new HitBuilders.ScreenViewBuilder().build());
     }
