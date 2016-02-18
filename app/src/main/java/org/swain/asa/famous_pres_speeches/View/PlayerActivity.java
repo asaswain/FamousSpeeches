@@ -41,20 +41,20 @@ import mehdi.sakout.fancybuttons.FancyButton;
 /**
  * Famous US Speeches Android Application
  * Copyright (C) 2015  Asa F. Swain
- *
- *  This program is free software: you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation, either version 3 of the License, or
+ * <p/>
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- *
+ * <p/>
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- *
+ * <p/>
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
+ * <p/>
  * This class plays the recording of a speech and displays controls for the playback,
  * and buttons to go to the speech transcript and wikipeida entry
  */
@@ -111,24 +111,22 @@ public class PlayerActivity extends AppCompatActivity {
         mySpeech = mySpeechList.getSpeech(orator, title);
 
         if (mySpeech != null) {
+            // load title and portrait for speech
+            loadSpeechTitle(mySpeech);
+            loadPortrait(mySpeech);
+
+            // if another speech is playing, stop that speech
             Speech currentSpeech = CurrentlyPlaying.getCurrentlyPlayingSpeech();
-            if (currentSpeech == null || !currentSpeech.equals(mySpeech)) {
+            if (currentSpeech != null && !currentSpeech.equals(mySpeech)) {
                 // check if we need to kill old speech
                 if (CurrentlyPlaying.getCurrentlyPlayingService() != null && isMyServiceRunning()) {
                     CurrentlyPlaying.getCurrentlyPlayingService().kill();
                 }
-                // start playing new speech
-                startPlaying();
-                CurrentlyPlaying.setCurrentlyPlayingSpeech(mySpeech);
             }
-
-            // load title and portrait for speech
-            loadSpeechTitle(mySpeech);
-            loadPortrait(mySpeech);
         }
 
-        volumeSeekBar = (SeekBar)findViewById(R.id.volumeSeekBar);
-        progressSeekBar = (SeekBar)findViewById(R.id.progressSeekBar);
+        volumeSeekBar = (SeekBar) findViewById(R.id.volumeSeekBar);
+        progressSeekBar = (SeekBar) findViewById(R.id.progressSeekBar);
         progressTextView = (TextView) findViewById(R.id.timeElapsed);
 
         // set background colors and slider images for progress and volume seekbars
@@ -190,19 +188,17 @@ public class PlayerActivity extends AppCompatActivity {
                     // this code sets the volume 3 times, because for some reason it doesn't always take
                     // the first time I change the MediaPlayer volume when starting a speech
                     if (volumeUpdateCounter > 0) {
-                        int currentVolume = new Double(mediaPlayerService.getVolume() * volumeSeekBar.getMax()).intValue();
+                        int currentVolume = Double.valueOf(mediaPlayerService.getVolume() * volumeSeekBar.getMax()).intValue();
                         if (currentVolume != CurrentlyPlaying.getCurrentVolume()) {
-                            setMediaPlayerVolume(currentVolume);
+                            setMediaPlayerVolume(CurrentlyPlaying.getCurrentVolume());
                         }
                         if (volumeUpdateCounter == 1) {
-                            // finally, update the saved volume with the current volume level
-                            currentVolume = new Double(mediaPlayerService.getVolume() * volumeSeekBar.getMax()).intValue();
+                            // finally, update the saved volume in CurrentlyPlaying object with the current volume level
+                            currentVolume = Double.valueOf(mediaPlayerService.getVolume() * volumeSeekBar.getMax()).intValue();
                             CurrentlyPlaying.setCurrentVolume(currentVolume);
                         }
                         volumeUpdateCounter -= 1;
                     }
-                    // this is the alternativem to constantly update the volume
-                    //setMediaPlayerVolume(CurrentlyPlaying.getCurrentVolume());
 
                     int totalMillis = mediaPlayerService.getDuration();
                     String totalTime = String.format("%02d:%02d",
@@ -214,8 +210,13 @@ public class PlayerActivity extends AppCompatActivity {
                     if (totalMillis != 0) {
                         timeElapsed = getResources().getString(R.string.time_elapsed) + " " + elpasedTime + " / " + totalTime;
                     } else {
-                        // display "loading" message until we have loaded the speech
-                        timeElapsed = getResources().getString(R.string.loading);
+                        Speech currentSpeech = CurrentlyPlaying.getCurrentlyPlayingSpeech();
+                        if (mySpeech != null && currentSpeech != null && currentSpeech.equals(mySpeech)) {
+                            // display "loading" message until we have loaded the speech
+                            timeElapsed = getResources().getString(R.string.loading);
+                        } else {
+                            timeElapsed = "";
+                        }
                     }
                     progressTextView.setText(timeElapsed);
 
@@ -249,27 +250,35 @@ public class PlayerActivity extends AppCompatActivity {
         pausePlayButton.setOnClickListener(new Button.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (isMyServiceRunning()) {
-                    if (mediaPlayerService.isSpeechPlaying()) {
-                        mediaPlayerService.pausePlayback();
-                        // Google Analytics code
-                        PresSpeechApplication application = (PresSpeechApplication) getApplication();
-                        application.logGoogleAnalysticsEvent(activityName, "PauseButton", orator + "/" + title);
+                if (isMyServiceRunning() && mediaPlayerService.isSpeechPlaying()) {
+                    mediaPlayerService.pausePlayback();
+                    // Google Analytics code
+                    PresSpeechApplication application = (PresSpeechApplication) getApplication();
+                    application.logGoogleAnalysticsEvent(activityName, "PauseButton", orator + "/" + title);
+                } else {
+                    // if we weren't playing this speech before, initialize speech playback, otherwise restart mediaplayer
+                    Speech currentSpeech = CurrentlyPlaying.getCurrentlyPlayingSpeech();
+                    if (currentSpeech == null || !currentSpeech.equals(mySpeech)) {
+                        CurrentlyPlaying.setCurrentlyPlayingSpeech(mySpeech);
+                        // configure and start playing new speech
+                        initializePlayback();
                     } else {
                         mediaPlayerService.startPlayback();
-                        // Google Analytics code
-                        PresSpeechApplication application = (PresSpeechApplication) getApplication();
-                        application.logGoogleAnalysticsEvent(activityName, "StartButton", orator + "/" + title);
                     }
+                    // update volume in case user changes volume while mediaplayer was paused
+                    volumeUpdateCounter = 3;
+
+                    // Google Analytics code
+                    PresSpeechApplication application = (PresSpeechApplication) getApplication();
+                    application.logGoogleAnalysticsEvent(activityName, "StartButton", orator + "/" + title);
                 }
             }
-
         });
 
         final FancyButton stopButton = (FancyButton) findViewById(R.id.stopButton);
         stopButton.setOnClickListener(new Button.OnClickListener() {
             @Override
-            public void onClick(View v) {
+            public void onClick (View v){
                 if (isMyServiceRunning()) {
                     pausePlayButton.setText(getResources().getString(R.string.play_button));
                     mediaPlayerService.stopPlayback();
@@ -283,7 +292,7 @@ public class PlayerActivity extends AppCompatActivity {
         final FancyButton rewindButton = (FancyButton) findViewById(R.id.rewindButton);
         rewindButton.setOnClickListener(new Button.OnClickListener() {
             @Override
-            public void onClick(View v) {
+            public void onClick (View v){
                 if (isMyServiceRunning()) {
                     int timeInSeconds = 15;
                     mediaPlayerService.rewindPlayback(timeInSeconds);
@@ -297,7 +306,7 @@ public class PlayerActivity extends AppCompatActivity {
         final FancyButton fastforwardButton = (FancyButton) findViewById(R.id.fastForwardButton);
         fastforwardButton.setOnClickListener(new Button.OnClickListener() {
             @Override
-            public void onClick(View v) {
+            public void onClick (View v){
                 if (isMyServiceRunning()) {
                     int timeInSeconds = 15;
                     mediaPlayerService.fastForwardPlayback(timeInSeconds);
@@ -312,7 +321,7 @@ public class PlayerActivity extends AppCompatActivity {
         final FancyButton speechTextButton = (FancyButton) findViewById(R.id.speechTextButton);
         speechTextButton.setOnClickListener(new Button.OnClickListener() {
             @Override
-            public void onClick(View v) {
+            public void onClick (View v){
                 Intent intent = new Intent(getBaseContext(), SpeechTextActivity.class);
                 intent.putExtra("oratorData", mySpeech.getOrator().getFullName());
                 intent.putExtra("titleData", mySpeech.getTitle());
@@ -327,7 +336,7 @@ public class PlayerActivity extends AppCompatActivity {
         final FancyButton wikipediaButton = (FancyButton) findViewById(R.id.wikipediaButton);
         wikipediaButton.setOnClickListener(new Button.OnClickListener() {
             @Override
-            public void onClick(View v) {
+            public void onClick (View v){
                 Intent intent = new Intent(getBaseContext(), WikipediaActivity.class);
                 intent.putExtra("wikipediaURL", mySpeech.getWikipediaURL());
                 startActivity(intent);
@@ -340,8 +349,8 @@ public class PlayerActivity extends AppCompatActivity {
         // Google Analytics code
         // Obtain the shared Tracker instance.
         PresSpeechApplication application = (PresSpeechApplication) getApplication();
-        mTracker = application.getDefaultTracker();
-        application.logGoogleAnalysticsEvent(activityName, "StartButton", orator + "/" + title);
+        mTracker=application.getDefaultTracker();
+        application.logGoogleAnalysticsEvent(activityName,"StartButton",orator+"/"+title);
     }
 
     @Override
@@ -357,7 +366,7 @@ public class PlayerActivity extends AppCompatActivity {
     //Is the MediaPlayerService already running?
 
     private boolean isMyServiceRunning() {
-        ActivityManager activityManager = (ActivityManager)getSystemService(Context.ACTIVITY_SERVICE);
+        ActivityManager activityManager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
         List<ActivityManager.RunningServiceInfo> runningServices = activityManager.getRunningServices(Integer.MAX_VALUE);
         String name = MediaPlayerService.class.getName();
 
@@ -414,10 +423,8 @@ public class PlayerActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    private void startPlaying() {
-        SpeechList mySpeechList = new SpeechList(this);
-        mySpeech = mySpeechList.getSpeech(orator, title);
-        if (mySpeech != null){
+    private void initializePlayback() {
+        if (mySpeech != null) {
             Intent intent = new Intent(this, MediaPlayerService.class);
             intent.putExtra("SpeechURL", mySpeech.getWebRecordingURL());
             ComponentName componentName = startService(intent); //calls onStartCommand
@@ -447,16 +454,17 @@ public class PlayerActivity extends AppCompatActivity {
     */
 
     private void loadSpeechTitle(Speech mySpeech) {
-        TextView titleview = (TextView)findViewById(R.id.speechTitle);
+        TextView titleview = (TextView) findViewById(R.id.speechTitle);
         titleview.setText(mySpeech.getTitle());
 
-        TextView oratorView = (TextView)findViewById(R.id.oratorNameAndYear);
+        TextView oratorView = (TextView) findViewById(R.id.oratorNameAndYear);
         String oratorAndYear = mySpeech.getOrator().getFullName() + " (" + mySpeech.getYear() + ")";
         oratorView.setText(oratorAndYear);
     }
 
     /**
      * Load webview with portrait of orator of speech
+     *
      * @param mySpeech - speech to load portrait URL for
      */
     private void loadPortrait(Speech mySpeech) {
@@ -466,16 +474,19 @@ public class PlayerActivity extends AppCompatActivity {
 
     /**
      * Set volume of mediaPlayerService
+     *
      * @param volume - integer of current volume
      */
     private void setMediaPlayerVolume(int volume) {
-        volumeSeekBar = (SeekBar)findViewById(R.id.volumeSeekBar);
+        volumeSeekBar = (SeekBar) findViewById(R.id.volumeSeekBar);
         if (mediaPlayerService != null) {
+            //float maxVolume = volumeSeekBar.getMax();
+            //float volumePercentage=(float)(1-(Math.log(maxVolume-volume)/Math.log(maxVolume)));
             float volumePercentage = volume / (float) volumeSeekBar.getMax();
             mediaPlayerService.setVolume(volumePercentage);
-            Log.d("Volume", ""+volume);
+            Log.d("Volume", "" + volume);
         } else {
-            Log.d("Volume", "fail "+volume);
+            Log.d("Volume", "fail " + volume);
         }
     }
 }

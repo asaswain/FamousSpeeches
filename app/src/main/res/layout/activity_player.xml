@@ -69,7 +69,7 @@
             android:layout_margin="3dp"
             fancy:fb_defaultColor="@color/medium_red"
             fancy:fb_textColor="@color/white"
-            fancy:fb_text="@string/pause_button"/>
+            fancy:fb_text="@string/play_button"/>
 
         <mehdi.sakout.fancybuttons.FancyButton
             android:id="@+id/stopButton"

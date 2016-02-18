@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.os.Binder;
+import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
 import android.widget.Toast;
@@ -55,7 +56,10 @@ public class MediaPlayerService extends Service implements AudioManager.OnAudioF
     public int onStartCommand(Intent intent, int flags, int startId) {
 
         // read webpage address of speech mp3 file from Intent object
-        speechURL = (String) intent.getExtras().get("SpeechURL");
+        Bundle extras = intent.getExtras();
+        if (extras.getString("SpeechURL") != null) {
+            speechURL = (String) extras.get("SpeechURL");
+        }
         //Uri speechURL = Uri.parse("android.resource://" + getPackageName() + "/" + R.raw.musette);
 
         if (speechURL != null) {
