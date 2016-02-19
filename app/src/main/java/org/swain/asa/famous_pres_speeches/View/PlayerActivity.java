@@ -70,6 +70,7 @@ public class PlayerActivity extends AppCompatActivity {
     private String title;
     // speech record currently loaded
     private Speech mySpeech;
+    private boolean needToUpdateVolume;
     private int volumeUpdateCounter;
 
     // Google Analytics
@@ -84,7 +85,7 @@ public class PlayerActivity extends AppCompatActivity {
             mediaPlayerService = binder.getService();
             isBound = true;
             volumeSeekBar.setProgress(CurrentlyPlaying.getCurrentVolume());
-            volumeUpdateCounter = 3;
+            needToUpdateVolume = true;
         }
 
         @Override
@@ -139,7 +140,7 @@ public class PlayerActivity extends AppCompatActivity {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 CurrentlyPlaying.setCurrentVolume(progress);
-                volumeUpdateCounter = 3;
+                needToUpdateVolume = true;
             }
 
             @Override
@@ -185,18 +186,15 @@ public class PlayerActivity extends AppCompatActivity {
                             TimeUnit.MILLISECONDS.toSeconds(elapsedMillis) - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(elapsedMillis))
                     );
 
-                    // this code sets the volume 3 times, because for some reason it doesn't always take
+                    // this code sets the volume 3 times, becuase if I change the because for some reason it doesn't always take
                     // the first time I change the MediaPlayer volume when starting a speech
+                    if (needToUpdateVolume) {
+                        volumeUpdateCounter = 3;
+                        needToUpdateVolume = false;
+                    }
+
                     if (volumeUpdateCounter > 0) {
-                        int currentVolume = Double.valueOf(mediaPlayerService.getVolume() * volumeSeekBar.getMax()).intValue();
-                        if (currentVolume != CurrentlyPlaying.getCurrentVolume()) {
-                            setMediaPlayerVolume(CurrentlyPlaying.getCurrentVolume());
-                        }
-                        if (volumeUpdateCounter == 1) {
-                            // finally, update the saved volume in CurrentlyPlaying object with the current volume level
-                            currentVolume = Double.valueOf(mediaPlayerService.getVolume() * volumeSeekBar.getMax()).intValue();
-                            CurrentlyPlaying.setCurrentVolume(currentVolume);
-                        }
+                        setMediaPlayerVolume(CurrentlyPlaying.getCurrentVolume());
                         volumeUpdateCounter -= 1;
                     }
 
@@ -266,7 +264,7 @@ public class PlayerActivity extends AppCompatActivity {
                         mediaPlayerService.startPlayback();
                     }
                     // update volume in case user changes volume while mediaplayer was paused
-                    volumeUpdateCounter = 3;
+                    needToUpdateVolume = true;
 
                     // Google Analytics code
                     PresSpeechApplication application = (PresSpeechApplication) getApplication();
@@ -480,9 +478,9 @@ public class PlayerActivity extends AppCompatActivity {
     private void setMediaPlayerVolume(int volume) {
         volumeSeekBar = (SeekBar) findViewById(R.id.volumeSeekBar);
         if (mediaPlayerService != null) {
-            //float maxVolume = volumeSeekBar.getMax();
-            //float volumePercentage=(float)(1-(Math.log(maxVolume-volume)/Math.log(maxVolume)));
-            float volumePercentage = volume / (float) volumeSeekBar.getMax();
+            // set volume using a logarithmic scale because humans don't hear volume lineraly
+            float maxVolume = volumeSeekBar.getMax();
+            float volumePercentage=(float)(1-(Math.log(maxVolume-volume)/Math.log(maxVolume)));
             mediaPlayerService.setVolume(volumePercentage);
             Log.d("Volume", "" + volume);
         } else {
