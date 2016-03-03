@@ -2,36 +2,36 @@
     xmlns:fancy="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:paddingBottom="@dimen/activity_vertical_margin"
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    android:orientation="vertical">
+    android:paddingTop="@dimen/activity_vertical_margin">
 
     <TextView
         android:id="@+id/speechTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="5dp"
-        android:textStyle="bold"
         android:layout_gravity="center_horizontal"
-        android:gravity="center"/>
+        android:layout_marginTop="5dp"
+        android:gravity="center"
+        android:textStyle="bold"/>
 
     <TextView
         android:id="@+id/oratorNameAndYear"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="5dp"
-        android:textStyle="bold"
         android:layout_gravity="center_horizontal"
-        android:gravity="center"/>
+        android:layout_marginBottom="5dp"
+        android:gravity="center"
+        android:textStyle="bold"/>
 
     <ImageView
         android:id="@+id/portrait"
-        android:contentDescription="@string/portrait_desc"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"/>
+        android:layout_weight="1"
+        android:contentDescription="@string/portrait_desc"/>
 
     <SeekBar
         android:id="@+id/progressSeekBar"
@@ -49,18 +49,18 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center">
+        android:gravity="center"
+        android:orientation="horizontal">
 
         <mehdi.sakout.fancybuttons.FancyButton
             android:id="@+id/rewindButton"
             android:layout_width="85dp"
             android:layout_height="75dp"
             android:layout_margin="3dp"
-            fancy:paddingStart="5dp"
             fancy:fb_defaultColor="@color/light_red"
+            fancy:fb_text="@string/rewind_button"
             fancy:fb_textColor="@color/white"
-            fancy:fb_text="@string/rewind_button"/>
+            fancy:paddingStart="5dp"/>
 
         <mehdi.sakout.fancybuttons.FancyButton
             android:id="@+id/pausePlayButton"
@@ -68,8 +68,8 @@
             android:layout_height="75dp"
             android:layout_margin="3dp"
             fancy:fb_defaultColor="@color/medium_red"
-            fancy:fb_textColor="@color/white"
-            fancy:fb_text="@string/play_button"/>
+            fancy:fb_text="@string/play_button"
+            fancy:fb_textColor="@color/white"/>
 
         <mehdi.sakout.fancybuttons.FancyButton
             android:id="@+id/stopButton"
@@ -77,18 +77,18 @@
             android:layout_height="75dp"
             android:layout_margin="3dp"
             fancy:fb_defaultColor="@color/medium_red"
-            fancy:fb_textColor="@color/white"
-            fancy:fb_text="@string/stop_button"/>
+            fancy:fb_text="@string/stop_button"
+            fancy:fb_textColor="@color/white"/>
 
         <mehdi.sakout.fancybuttons.FancyButton
             android:id="@+id/fastForwardButton"
             android:layout_width="85dp"
             android:layout_height="75dp"
             android:layout_margin="3dp"
-            fancy:fb_textGravity="center"
             fancy:fb_defaultColor="@color/light_red"
+            fancy:fb_text="@string/fast_forward_button"
             fancy:fb_textColor="@color/white"
-            fancy:fb_text="@string/fast_forward_button"/>
+            fancy:fb_textGravity="center"/>
     </LinearLayout>
 
     <TextView
@@ -105,34 +105,34 @@
 
     <mehdi.sakout.fancybuttons.FancyButton
         android:id="@+id/speechTextButton"
-        android:layout_gravity="center_horizontal"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
         android:paddingBottom="10dp"
         android:paddingLeft="20dp"
         android:paddingRight="20dp"
         android:paddingTop="10dp"
         fancy:fb_borderColor="#FFFFFF"
         fancy:fb_borderWidth="1dp"
-        fancy:fb_radius="30dp"
         fancy:fb_defaultColor="@color/dark_red"
-        fancy:fb_textColor="@color/white"
-        fancy:fb_text="@string/show_speech_text"/>
+        fancy:fb_radius="30dp"
+        fancy:fb_text="@string/show_speech_text"
+        fancy:fb_textColor="@color/white"/>
 
         <mehdi.sakout.fancybuttons.FancyButton
             android:id="@+id/wikipediaButton"
-            android:layout_gravity="center_horizontal"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
             android:paddingBottom="10dp"
             android:paddingLeft="20dp"
             android:paddingRight="20dp"
             android:paddingTop="10dp"
             fancy:fb_borderColor="#FFFFFF"
             fancy:fb_borderWidth="1dp"
-            fancy:fb_radius="30dp"
             fancy:fb_defaultColor="@color/dark_red"
-            fancy:fb_textColor="@color/white"
-            fancy:fb_text="@string/show_wikipedia"/>
+            fancy:fb_radius="30dp"
+            fancy:fb_text="@string/show_wikipedia"
+            fancy:fb_textColor="@color/white"/>
 
 </LinearLayout>

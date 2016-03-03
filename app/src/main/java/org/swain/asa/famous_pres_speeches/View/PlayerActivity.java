@@ -113,8 +113,8 @@ public class PlayerActivity extends AppCompatActivity {
 
         if (mySpeech != null) {
             // load title and portrait for speech
-            loadSpeechTitle(mySpeech);
-            loadPortrait(mySpeech);
+            loadSpeechTitle();
+            loadPortrait();
 
             // if another speech is playing, stop that speech
             Speech currentSpeech = CurrentlyPlaying.getCurrentlyPlayingSpeech();
@@ -225,8 +225,6 @@ public class PlayerActivity extends AppCompatActivity {
                     } else {
                         pausePlayButton.setText(getResources().getString(R.string.play_button));
                     }
-
-                    CurrentlyPlaying.setCurrentlyPlayingService(mediaPlayerService);
                 }
             }
         };
@@ -254,15 +252,8 @@ public class PlayerActivity extends AppCompatActivity {
                     PresSpeechApplication application = (PresSpeechApplication) getApplication();
                     application.logGoogleAnalysticsEvent(activityName, "PauseButton", orator + "/" + title);
                 } else {
-                    // if we weren't playing this speech before, initialize speech playback, otherwise restart mediaplayer
-                    Speech currentSpeech = CurrentlyPlaying.getCurrentlyPlayingSpeech();
-                    if (currentSpeech == null || !currentSpeech.equals(mySpeech)) {
-                        CurrentlyPlaying.setCurrentlyPlayingSpeech(mySpeech);
-                        // configure and start playing new speech
-                        initializePlayback();
-                    } else {
-                        mediaPlayerService.startPlayback();
-                    }
+                    startPlayback();
+
                     // update volume in case user changes volume while mediaplayer was paused
                     needToUpdateVolume = true;
 
@@ -361,8 +352,11 @@ public class PlayerActivity extends AppCompatActivity {
         mTracker.send(new HitBuilders.ScreenViewBuilder().build());
     }
 
-    //Is the MediaPlayerService already running?
-
+    /**
+     * Check to see if the MediaPlayerService is already running
+     *
+     * @return true if MediaPlayerService is running
+     */
     private boolean isMyServiceRunning() {
         ActivityManager activityManager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
         List<ActivityManager.RunningServiceInfo> runningServices = activityManager.getRunningServices(Integer.MAX_VALUE);
@@ -421,21 +415,32 @@ public class PlayerActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    private void initializePlayback() {
-        if (mySpeech != null) {
-            Intent intent = new Intent(this, MediaPlayerService.class);
-            intent.putExtra("SpeechURL", mySpeech.getWebRecordingURL());
-            ComponentName componentName = startService(intent); //calls onStartCommand
+    /**
+     * This starts playing the mediaPlayer and initialized the speech playback if necessary
+     */
+    public void startPlayback() {
+        Speech currentSpeech = CurrentlyPlaying.getCurrentlyPlayingSpeech();
+        if (currentSpeech != null && currentSpeech.equals(mySpeech)) {
+            mediaPlayerService.startPlayback();
+        } else {
+            // configure and start playing new speech
+            if (mySpeech != null) {
+                CurrentlyPlaying.setCurrentlyPlayingService(mediaPlayerService);
+                CurrentlyPlaying.setCurrentlyPlayingSpeech(mySpeech);
 
-            if (componentName == null) {
-                Toast toast = Toast.makeText(this, "could not start Service "
+                Intent intent = new Intent(this, MediaPlayerService.class);
+                intent.putExtra("SpeechURL", mySpeech.getWebRecordingURL());
+                ComponentName componentName = startService(intent); //calls onStartCommand
+                if (componentName == null) {
+                    Toast toast = Toast.makeText(this, "could not start Service "
+                            + MediaPlayerService.class.getName(), Toast.LENGTH_LONG);
+                    toast.show();
+                }
+            } else {
+                Toast toast = Toast.makeText(this, "Speech is missing"
                         + MediaPlayerService.class.getName(), Toast.LENGTH_LONG);
                 toast.show();
             }
-        } else {
-            Toast toast = Toast.makeText(this, "Speech is missing"
-                    + MediaPlayerService.class.getName(), Toast.LENGTH_LONG);
-            toast.show();
         }
     }
 
@@ -451,7 +456,10 @@ public class PlayerActivity extends AppCompatActivity {
     }
     */
 
-    private void loadSpeechTitle(Speech mySpeech) {
+    /**
+     * Load title of speech, name of orator, and year of speech into textViews
+     */
+    private void loadSpeechTitle() {
         TextView titleview = (TextView) findViewById(R.id.speechTitle);
         titleview.setText(mySpeech.getTitle());
 
@@ -462,10 +470,8 @@ public class PlayerActivity extends AppCompatActivity {
 
     /**
      * Load webview with portrait of orator of speech
-     *
-     * @param mySpeech - speech to load portrait URL for
      */
-    private void loadPortrait(Speech mySpeech) {
+    private void loadPortrait() {
         String url = mySpeech.getPortraitURL();
         new DownloadImageTask((ImageView) findViewById(R.id.portrait)).execute(url);
     }

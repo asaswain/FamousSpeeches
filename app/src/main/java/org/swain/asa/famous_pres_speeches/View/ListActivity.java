@@ -5,13 +5,16 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -19,11 +22,15 @@ import android.widget.Toast;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
 
+import org.swain.asa.famous_pres_speeches.Controller.MediaPlayerService;
 import org.swain.asa.famous_pres_speeches.PresSpeechApplication;
 import org.swain.asa.famous_pres_speeches.Controller.SpeechSQLHelper;
 import org.swain.asa.famous_pres_speeches.Model.CurrentlyPlaying;
 import org.swain.asa.famous_pres_speeches.Model.Speech;
 import org.swain.asa.famous_pres_speeches.R;
+
+import java.util.Timer;
+import java.util.TimerTask;
 
 import mehdi.sakout.fancybuttons.FancyButton;
 
@@ -167,20 +174,78 @@ public class ListActivity extends AppCompatActivity {
         super.onResume();
 
         // hide/show Now Playing button
-        Button nowPlaying = (Button) findViewById(R.id.nowPlaying);
+        //Button nowPlaying = (Button) findViewById(R.id.nowPlaying);
 
-        if (CurrentlyPlaying.getCurrentlyPlayingSpeech() == null) {
-            nowPlaying.setVisibility(View.INVISIBLE);
+        LinearLayout statusLayout = (LinearLayout) findViewById(R.id.statusWindow);
+
+        final Speech currentSpeech = CurrentlyPlaying.getCurrentlyPlayingSpeech();
+        final MediaPlayerService currentService = CurrentlyPlaying.getCurrentlyPlayingService();
+
+        int layoutHeight;
+        if (currentSpeech == null) {
+            //nowPlaying.setVisibility(View.INVISIBLE);
+            layoutHeight = 0;
         } else {
-            nowPlaying.setVisibility(View.VISIBLE);
+            //nowPlaying.setVisibility(View.VISIBLE);
+            layoutHeight = ViewGroup.LayoutParams.WRAP_CONTENT;
+        }
 
-            // set listener for New Playing button
-            nowPlaying.setOnClickListener(new View.OnClickListener() {
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,layoutHeight);
+        statusLayout.setLayoutParams(params);
+
+        if (currentSpeech != null) {
+            TextView currentlyPlayingName = (TextView) findViewById(R.id.currentlyPlayingName);
+            currentlyPlayingName.setText(currentSpeech.getTitle());
+            // set listener for currently playing textView
+            currentlyPlayingName.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     loadCurrentSpeechScreen();
                 }
             });
+
+            final FancyButton currentlyPlayingButton = (FancyButton) findViewById(R.id.currentlyPlayingButton);
+
+            final String orator = currentSpeech.getOrator().getFullName();
+            final String title = currentSpeech.getTitle();
+
+            currentlyPlayingButton.setOnClickListener(new Button.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (currentService.isSpeechPlaying()) {
+                        currentService.pausePlayback();
+                        // Google Analytics code
+                        PresSpeechApplication application = (PresSpeechApplication) getApplication();
+                        application.logGoogleAnalysticsEvent(activityName, "PauseButton", orator + "/" + title);
+                    } else {
+                        // if we weren't playing this speech before, initialize speech playback, otherwise restart mediaplayer
+                        currentService.startPlayback();
+
+                        // Google Analytics code
+                        PresSpeechApplication application = (PresSpeechApplication) getApplication();
+                        application.logGoogleAnalysticsEvent(activityName, "StartButton", orator + "/" + title);
+                    }
+                }
+            });
+
+            final Runnable myRunnable = new Runnable() {
+                public void run() {
+                    if (CurrentlyPlaying.getCurrentlyPlayingService().isSpeechPlaying()) {
+                        currentlyPlayingButton.setText(getResources().getString(R.string.pause_button));
+                    } else {
+                        currentlyPlayingButton.setText(getResources().getString(R.string.play_button));
+                    }
+                }
+            };
+
+            final Handler myHandler = new Handler();
+            Timer myTimer = new Timer();
+            myTimer.schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    myHandler.post(myRunnable);
+                }
+            }, 0, 1000);
         }
 
         // Google Analytics code
