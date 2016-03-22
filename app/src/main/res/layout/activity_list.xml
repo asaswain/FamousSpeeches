@@ -128,7 +128,8 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center_horizontal"
+            android:gravity="center"
+            android:layout_marginBottom="5dp"
             android:orientation="horizontal">
 
             <!-- Help button -->
@@ -137,7 +138,6 @@
                 android:id="@+id/helpButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
                 android:layout_marginEnd="20dp"
                 android:layout_marginRight="20dp"
                 android:paddingBottom="10dp"
@@ -157,7 +157,6 @@
                 android:id="@+id/creditsButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
                 android:layout_marginLeft="20dp"
                 android:layout_marginStart="20dp"
                 android:paddingBottom="10dp"
@@ -173,33 +172,41 @@
 
         </LinearLayout>
 
-        <LinearLayout
+        <RelativeLayout
             android:id="@+id/statusWindow"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:padding="5dp"
+            android:background="@color/dark_blue">
 
-            <mehdi.sakout.fancybuttons.FancyButton
-                android:id="@+id/currentlyPlayingButton"
-                android:layout_width="75dp"
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="50dp"
-                android:layout_margin="3dp"
-                fancy:fb_defaultColor="@color/medium_red"
-                fancy:fb_text="@string/play_button"
-                fancy:fb_textColor="@color/white"/>
+                android:background="@color/white"
+                android:orientation="horizontal">
 
-            <TextView
-                android:id="@+id/currentlyPlayingName"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="8"
-                android:layout_gravity="center_vertical"
-                android:layout_marginLeft="5dp"
-                android:textSize="18sp"
-                android:textColor="@color/black"/>
+                <mehdi.sakout.fancybuttons.FancyButton
+                    android:id="@+id/currentlyPlayingButton"
+                    android:layout_width="70dp"
+                    android:layout_height="50dp"
+                    android:gravity="center"
+                    fancy:fb_defaultColor="@color/medium_red"
+                    fancy:fb_text="@string/play_button"
+                    fancy:fb_textColor="@color/white"/>
 
-        </LinearLayout>
+                <TextView
+                    android:id="@+id/currentlyPlayingName"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="8"
+                    android:gravity="center_vertical"
+                    android:layout_marginStart="5dp"
+                    android:layout_marginLeft="5dp"
+                    android:textSize="18sp"
+                    android:textColor="@color/black"/>
 
+            </LinearLayout>
+        </RelativeLayout>
     </LinearLayout>
 
     <!-- This TextView is displayed when the table contains no records. -->

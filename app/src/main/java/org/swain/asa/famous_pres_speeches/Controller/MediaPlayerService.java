@@ -1,5 +1,7 @@
 package org.swain.asa.famous_pres_speeches.Controller;
 
+import android.app.Activity;
+import android.app.ActivityManager;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
@@ -12,6 +14,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 import java.io.IOException;
+import java.util.List;
 
 /**
  * Famous US Speeches Android Application
@@ -173,7 +176,7 @@ public class MediaPlayerService extends Service implements AudioManager.OnAudioF
             mediaPlayer.start();
             isPlaying = true;
             // initialize duration of recording only once
-            if (!durationSaved && isPlaying) {
+            if (!durationSaved) {
                 int duration = mediaPlayer.getDuration();
                 Log.d("duration", duration + "");
                 setDuration(duration);
@@ -297,5 +300,23 @@ public class MediaPlayerService extends Service implements AudioManager.OnAudioF
     // this ends and kills current playback
     public void kill() {
         MediaPlayerService.this.stopSelf();  //calls onDestroy method
+    }
+
+    /**
+     * Check to see if the MediaPlayerService is already running
+     *
+     * @return true if MediaPlayerService is running
+     */
+    public static boolean isServiceRunning(Activity currentActivity) {
+        ActivityManager activityManager = (ActivityManager) currentActivity.getSystemService(Context.ACTIVITY_SERVICE);
+        List<ActivityManager.RunningServiceInfo> runningServices = activityManager.getRunningServices(Integer.MAX_VALUE);
+        String name = MediaPlayerService.class.getName();
+
+        for (ActivityManager.RunningServiceInfo runningServiceInfo : runningServices) {
+            if (runningServiceInfo.service.getClassName().equals(name)) {
+                return true;
+            }
+        }
+        return false;
     }
 }

@@ -27,6 +27,7 @@ public class CurrentlyPlaying {
     static private Speech currentlyPlayingSpeech = null;
     static private MediaPlayerService currentlyPlayingService = null;
     static private int currentVolume = 50;
+    static private boolean isSpeechInitialized = false;
 
     public static Speech getCurrentlyPlayingSpeech() {
         return currentlyPlayingSpeech;
@@ -50,5 +51,13 @@ public class CurrentlyPlaying {
 
     public static void setCurrentVolume(int currentVolume) {
         CurrentlyPlaying.currentVolume = currentVolume;
+    }
+
+    public static boolean isSpeechInitialized() {
+        return isSpeechInitialized;
+    }
+
+    public static void setIsSpeechInitialized(boolean isSpeechInitialized) {
+        CurrentlyPlaying.isSpeechInitialized = isSpeechInitialized;
     }
 }

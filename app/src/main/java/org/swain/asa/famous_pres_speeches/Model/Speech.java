@@ -1,5 +1,12 @@
 package org.swain.asa.famous_pres_speeches.Model;
 
+import android.app.Activity;
+import android.content.ComponentName;
+import android.content.Intent;
+import android.widget.Toast;
+
+import org.swain.asa.famous_pres_speeches.Controller.MediaPlayerService;
+
 /**
  * Famous US Speeches Android Application
  * Copyright (C) 2015  Asa F. Swain
@@ -128,6 +135,30 @@ public class Speech {
 
     public String toString() {
         return orator + " " + title;
+    }
+
+    /**
+     * This starts playing the mediaPlayer and initialized the speech playback if necessary
+     */
+    public void startSpeech(Activity currentActivity, MediaPlayerService mediaPlayerService) {
+        if (CurrentlyPlaying.isSpeechInitialized()) {
+            mediaPlayerService.startPlayback();
+        } else {
+            Intent intent = new Intent(currentActivity, MediaPlayerService.class);
+            intent.putExtra("SpeechURL", getWebRecordingURL());
+            ComponentName componentName = currentActivity.startService(intent); //calls onStartCommand
+            if (componentName != null) {
+                CurrentlyPlaying.setIsSpeechInitialized(true);
+            } else {
+                Toast toast = Toast.makeText(currentActivity, "could not start Service "
+                        + MediaPlayerService.class.getName(), Toast.LENGTH_LONG);
+                toast.show();
+            }
+        }
+    }
+
+    public void pauseSpeech(MediaPlayerService mediaPlayerService) {
+        mediaPlayerService.pausePlayback();
     }
 
     @Override

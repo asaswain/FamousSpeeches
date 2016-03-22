@@ -1,6 +1,5 @@
 package org.swain.asa.famous_pres_speeches.View;
 
-import android.app.ActivityManager;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -18,20 +17,18 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
 
-import org.swain.asa.famous_pres_speeches.PresSpeechApplication;
 import org.swain.asa.famous_pres_speeches.Controller.DownloadImageTask;
 import org.swain.asa.famous_pres_speeches.Controller.MediaPlayerService;
 import org.swain.asa.famous_pres_speeches.Model.CurrentlyPlaying;
 import org.swain.asa.famous_pres_speeches.Model.Speech;
 import org.swain.asa.famous_pres_speeches.Model.SpeechList;
+import org.swain.asa.famous_pres_speeches.PresSpeechApplication;
 import org.swain.asa.famous_pres_speeches.R;
 
-import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.TimeUnit;
@@ -72,6 +69,7 @@ public class PlayerActivity extends AppCompatActivity {
     private Speech mySpeech;
     private boolean needToUpdateVolume;
     private int volumeUpdateCounter;
+    private boolean isSpeechLoading = false;
 
     // Google Analytics
     private Tracker mTracker;
@@ -86,12 +84,14 @@ public class PlayerActivity extends AppCompatActivity {
             isBound = true;
             volumeSeekBar.setProgress(CurrentlyPlaying.getCurrentVolume());
             needToUpdateVolume = true;
+            CurrentlyPlaying.setCurrentlyPlayingService(mediaPlayerService);
         }
 
         @Override
         public void onServiceDisconnected(ComponentName componentName) {
             isBound = false;
             mediaPlayerService = null;
+            CurrentlyPlaying.setCurrentlyPlayingService(null);
         }
     };
 
@@ -120,10 +120,15 @@ public class PlayerActivity extends AppCompatActivity {
             Speech currentSpeech = CurrentlyPlaying.getCurrentlyPlayingSpeech();
             if (currentSpeech != null && !currentSpeech.equals(mySpeech)) {
                 // check if we need to kill old speech
-                if (CurrentlyPlaying.getCurrentlyPlayingService() != null && isMyServiceRunning()) {
+                if (CurrentlyPlaying.getCurrentlyPlayingService() != null && MediaPlayerService.isServiceRunning(this)) {
                     CurrentlyPlaying.getCurrentlyPlayingService().kill();
                 }
+                // set that we need to initialize the new speech
+                CurrentlyPlaying.setIsSpeechInitialized(false);
             }
+
+            // set CurrentlyPlaying object to new speech
+            CurrentlyPlaying.setCurrentlyPlayingSpeech(mySpeech);
         }
 
         volumeSeekBar = (SeekBar) findViewById(R.id.volumeSeekBar);
@@ -156,7 +161,7 @@ public class PlayerActivity extends AppCompatActivity {
         progressSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                if (fromUser && mediaPlayerService != null && isMyServiceRunning()) {
+                if (fromUser && mediaPlayerService != null && MediaPlayerService.isServiceRunning(PlayerActivity.this)) {
                     int musicDuration = mediaPlayerService.getDuration();
                     int musicTime = Math.round((progress / (float) seekBar.getMax()) * musicDuration);
                     mediaPlayerService.setTime(musicTime);
@@ -181,7 +186,7 @@ public class PlayerActivity extends AppCompatActivity {
 
                     // update time elapsed view
                     int elapsedMillis = mediaPlayerService.getTime();
-                    String elpasedTime = String.format("%02d:%02d",
+                    String elapsedTime = String.format("%02d:%02d",
                             TimeUnit.MILLISECONDS.toMinutes(elapsedMillis),
                             TimeUnit.MILLISECONDS.toSeconds(elapsedMillis) - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(elapsedMillis))
                     );
@@ -204,18 +209,19 @@ public class PlayerActivity extends AppCompatActivity {
                             TimeUnit.MILLISECONDS.toSeconds(totalMillis) - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(totalMillis))
                     );
 
-                    String timeElapsed;
+                    String timeElapsed = "";
                     if (totalMillis != 0) {
-                        timeElapsed = getResources().getString(R.string.time_elapsed) + " " + elpasedTime + " / " + totalTime;
+                        timeElapsed = getResources().getString(R.string.time_elapsed) + " " + elapsedTime + " / " + totalTime;
+                        if (isSpeechLoading) {
+                            isSpeechLoading = false;
+                        }
                     } else {
-                        Speech currentSpeech = CurrentlyPlaying.getCurrentlyPlayingSpeech();
-                        if (mySpeech != null && currentSpeech != null && currentSpeech.equals(mySpeech)) {
-                            // display "loading" message until we have loaded the speech
+                        if (mySpeech != null && isSpeechLoading) {
+                            // if speech hasn't started playing yet, display "loading" message
                             timeElapsed = getResources().getString(R.string.loading);
-                        } else {
-                            timeElapsed = "";
                         }
                     }
+
                     progressTextView.setText(timeElapsed);
 
                     // change pause/play button text based on if music is playing
@@ -246,20 +252,24 @@ public class PlayerActivity extends AppCompatActivity {
         pausePlayButton.setOnClickListener(new Button.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (isMyServiceRunning() && mediaPlayerService.isSpeechPlaying()) {
-                    mediaPlayerService.pausePlayback();
-                    // Google Analytics code
-                    PresSpeechApplication application = (PresSpeechApplication) getApplication();
-                    application.logGoogleAnalysticsEvent(activityName, "PauseButton", orator + "/" + title);
-                } else {
-                    startPlayback();
+                if (mySpeech != null) {
+                    if (MediaPlayerService.isServiceRunning(PlayerActivity.this) && mediaPlayerService.isSpeechPlaying()) {
+                        mySpeech.pauseSpeech(mediaPlayerService);
 
-                    // update volume in case user changes volume while mediaplayer was paused
-                    needToUpdateVolume = true;
+                        // Google Analytics code
+                        PresSpeechApplication application = (PresSpeechApplication) getApplication();
+                        application.logGoogleAnalysticsEvent(activityName, "PauseButton", orator + "/" + title);
+                    } else {
+                        mySpeech.startSpeech(PlayerActivity.this, mediaPlayerService);
 
-                    // Google Analytics code
-                    PresSpeechApplication application = (PresSpeechApplication) getApplication();
-                    application.logGoogleAnalysticsEvent(activityName, "StartButton", orator + "/" + title);
+                        // update volume in case user changes volume while mediaplayer was paused
+                        needToUpdateVolume = true;
+                        isSpeechLoading = true;
+
+                        // Google Analytics code
+                        PresSpeechApplication application = (PresSpeechApplication) getApplication();
+                        application.logGoogleAnalysticsEvent(activityName, "StartButton", orator + "/" + title);
+                    }
                 }
             }
         });
@@ -268,12 +278,13 @@ public class PlayerActivity extends AppCompatActivity {
         stopButton.setOnClickListener(new Button.OnClickListener() {
             @Override
             public void onClick (View v){
-                if (isMyServiceRunning()) {
+                if (MediaPlayerService.isServiceRunning(PlayerActivity.this)) {
                     pausePlayButton.setText(getResources().getString(R.string.play_button));
                     mediaPlayerService.stopPlayback();
                     // Google Analytics code
                     PresSpeechApplication application = (PresSpeechApplication) getApplication();
                     application.logGoogleAnalysticsEvent(activityName, "StopButton", orator + "/" + title);
+                    isSpeechLoading = false;
                 }
             }
         });
@@ -282,7 +293,7 @@ public class PlayerActivity extends AppCompatActivity {
         rewindButton.setOnClickListener(new Button.OnClickListener() {
             @Override
             public void onClick (View v){
-                if (isMyServiceRunning()) {
+                if (MediaPlayerService.isServiceRunning(PlayerActivity.this)) {
                     int timeInSeconds = 15;
                     mediaPlayerService.rewindPlayback(timeInSeconds);
                     // Google Analytics code
@@ -296,7 +307,7 @@ public class PlayerActivity extends AppCompatActivity {
         fastforwardButton.setOnClickListener(new Button.OnClickListener() {
             @Override
             public void onClick (View v){
-                if (isMyServiceRunning()) {
+                if (MediaPlayerService.isServiceRunning(PlayerActivity.this)) {
                     int timeInSeconds = 15;
                     mediaPlayerService.fastForwardPlayback(timeInSeconds);
                     // Google Analytics code
@@ -352,24 +363,6 @@ public class PlayerActivity extends AppCompatActivity {
         mTracker.send(new HitBuilders.ScreenViewBuilder().build());
     }
 
-    /**
-     * Check to see if the MediaPlayerService is already running
-     *
-     * @return true if MediaPlayerService is running
-     */
-    private boolean isMyServiceRunning() {
-        ActivityManager activityManager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
-        List<ActivityManager.RunningServiceInfo> runningServices = activityManager.getRunningServices(Integer.MAX_VALUE);
-        String name = MediaPlayerService.class.getName();
-
-        for (ActivityManager.RunningServiceInfo runningServiceInfo : runningServices) {
-            if (runningServiceInfo.service.getClassName().equals(name)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
     @Override
     protected void onStart() {
         super.onStart();
@@ -413,35 +406,6 @@ public class PlayerActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
-    }
-
-    /**
-     * This starts playing the mediaPlayer and initialized the speech playback if necessary
-     */
-    public void startPlayback() {
-        Speech currentSpeech = CurrentlyPlaying.getCurrentlyPlayingSpeech();
-        if (currentSpeech != null && currentSpeech.equals(mySpeech)) {
-            mediaPlayerService.startPlayback();
-        } else {
-            // configure and start playing new speech
-            if (mySpeech != null) {
-                CurrentlyPlaying.setCurrentlyPlayingService(mediaPlayerService);
-                CurrentlyPlaying.setCurrentlyPlayingSpeech(mySpeech);
-
-                Intent intent = new Intent(this, MediaPlayerService.class);
-                intent.putExtra("SpeechURL", mySpeech.getWebRecordingURL());
-                ComponentName componentName = startService(intent); //calls onStartCommand
-                if (componentName == null) {
-                    Toast toast = Toast.makeText(this, "could not start Service "
-                            + MediaPlayerService.class.getName(), Toast.LENGTH_LONG);
-                    toast.show();
-                }
-            } else {
-                Toast toast = Toast.makeText(this, "Speech is missing"
-                        + MediaPlayerService.class.getName(), Toast.LENGTH_LONG);
-                toast.show();
-            }
-        }
     }
 
     /*

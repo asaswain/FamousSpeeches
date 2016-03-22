@@ -16,6 +16,7 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -23,10 +24,10 @@ import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
 
 import org.swain.asa.famous_pres_speeches.Controller.MediaPlayerService;
-import org.swain.asa.famous_pres_speeches.PresSpeechApplication;
 import org.swain.asa.famous_pres_speeches.Controller.SpeechSQLHelper;
 import org.swain.asa.famous_pres_speeches.Model.CurrentlyPlaying;
 import org.swain.asa.famous_pres_speeches.Model.Speech;
+import org.swain.asa.famous_pres_speeches.PresSpeechApplication;
 import org.swain.asa.famous_pres_speeches.R;
 
 import java.util.Timer;
@@ -58,7 +59,6 @@ public class ListActivity extends AppCompatActivity {
     private String databaseName = "speechdata.db";
     private SpeechSQLHelper helper;   //Can't initialize this field before onCreate.
     private SQLiteDatabase db;
-
     private SpeechAdapter adapter;
     // old code
     //private SimpleCursorAdapter adapter;
@@ -67,6 +67,9 @@ public class ListActivity extends AppCompatActivity {
     // if user clicks on the same sort heading twice then change the sort order from ascending to descending
     private String oldSortType = "";
     private boolean isSortOrderDescending = true;
+
+    private MediaPlayerService mediaPlayerService;
+    private boolean isBound = false; //Is this Activity currently bound to the Service?
 
     // Google Analytics
     private Tracker mTracker;
@@ -176,13 +179,13 @@ public class ListActivity extends AppCompatActivity {
         // hide/show Now Playing button
         //Button nowPlaying = (Button) findViewById(R.id.nowPlaying);
 
-        LinearLayout statusLayout = (LinearLayout) findViewById(R.id.statusWindow);
+        RelativeLayout statusLayout = (RelativeLayout) findViewById(R.id.statusWindow);
 
         final Speech currentSpeech = CurrentlyPlaying.getCurrentlyPlayingSpeech();
         final MediaPlayerService currentService = CurrentlyPlaying.getCurrentlyPlayingService();
 
         int layoutHeight;
-        if (currentSpeech == null) {
+        if (currentSpeech == null || !CurrentlyPlaying.isSpeechInitialized()) {
             //nowPlaying.setVisibility(View.INVISIBLE);
             layoutHeight = 0;
         } else {
@@ -193,7 +196,7 @@ public class ListActivity extends AppCompatActivity {
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,layoutHeight);
         statusLayout.setLayoutParams(params);
 
-        if (currentSpeech != null) {
+        if (currentSpeech != null && CurrentlyPlaying.isSpeechInitialized()) {
             TextView currentlyPlayingName = (TextView) findViewById(R.id.currentlyPlayingName);
             currentlyPlayingName.setText(currentSpeech.getTitle());
             // set listener for currently playing textView
@@ -212,24 +215,26 @@ public class ListActivity extends AppCompatActivity {
             currentlyPlayingButton.setOnClickListener(new Button.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+
                     if (currentService.isSpeechPlaying()) {
-                        currentService.pausePlayback();
+                        currentSpeech.pauseSpeech(currentService);
+
                         // Google Analytics code
                         PresSpeechApplication application = (PresSpeechApplication) getApplication();
                         application.logGoogleAnalysticsEvent(activityName, "PauseButton", orator + "/" + title);
                     } else {
-                        // if we weren't playing this speech before, initialize speech playback, otherwise restart mediaplayer
-                        currentService.startPlayback();
+                        currentSpeech.startSpeech(ListActivity.this, currentService);
 
                         // Google Analytics code
                         PresSpeechApplication application = (PresSpeechApplication) getApplication();
-                        application.logGoogleAnalysticsEvent(activityName, "StartButton", orator + "/" + title);
+                        application.logGoogleAnalysticsEvent(activityName, "PlayButton", orator + "/" + title);
                     }
                 }
             });
 
             final Runnable myRunnable = new Runnable() {
                 public void run() {
+                    Log.d("is playing = ","" + CurrentlyPlaying.getCurrentlyPlayingService().isSpeechPlaying());
                     if (CurrentlyPlaying.getCurrentlyPlayingService().isSpeechPlaying()) {
                         currentlyPlayingButton.setText(getResources().getString(R.string.pause_button));
                     } else {
@@ -311,18 +316,5 @@ public class ListActivity extends AppCompatActivity {
         intent.putExtra("oratorData", currentSpeech.getOrator().getFullName());
         intent.putExtra("titleData", currentSpeech.getTitle());
         startActivity(intent);
-    }
-
-    /**
-     * Log event in Google Analytics API
-     * @param action - action being performed
-     * @param label - information about the associated action
-     */
-    private void logGoogleAnalysticsEvent(String action, String label) {
-        mTracker.send(new HitBuilders.EventBuilder()
-                .setCategory("ListActivity")
-                .setAction(action)
-                .setLabel(label)
-                .build());
     }
 }
