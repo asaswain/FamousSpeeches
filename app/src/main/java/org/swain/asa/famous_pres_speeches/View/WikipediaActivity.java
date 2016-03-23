@@ -10,6 +10,7 @@ import android.webkit.WebViewClient;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
 
+import org.swain.asa.famous_pres_speeches.Controller.PlaybackController;
 import org.swain.asa.famous_pres_speeches.PresSpeechApplication;
 import org.swain.asa.famous_pres_speeches.R;
 
@@ -91,6 +92,9 @@ public class WikipediaActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+
+        // create speech playback view if speech is playing
+        PlaybackController.createControllerView(WikipediaActivity.this, activityName, WikipediaActivity.class);
 
         // Google Analytics code
         Log.i(activityName, "Setting screen name: " + activityName);

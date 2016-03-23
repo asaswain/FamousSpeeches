@@ -169,8 +169,9 @@
                 fancy:fb_radius="30dp"
                 fancy:fb_text="@string/credits_button"
                 fancy:fb_textColor="@color/white"/>
-
         </LinearLayout>
+
+        <!-- Layout to show controls for currently playing speech -->
 
         <RelativeLayout
             android:id="@+id/statusWindow"

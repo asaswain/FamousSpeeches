@@ -23,6 +23,7 @@ import com.google.android.gms.analytics.Tracker;
 
 import org.swain.asa.famous_pres_speeches.Controller.DownloadImageTask;
 import org.swain.asa.famous_pres_speeches.Controller.MediaPlayerService;
+import org.swain.asa.famous_pres_speeches.Controller.PlaybackController;
 import org.swain.asa.famous_pres_speeches.Model.CurrentlyPlaying;
 import org.swain.asa.famous_pres_speeches.Model.Speech;
 import org.swain.asa.famous_pres_speeches.Model.SpeechList;
@@ -254,13 +255,13 @@ public class PlayerActivity extends AppCompatActivity {
             public void onClick(View v) {
                 if (mySpeech != null) {
                     if (MediaPlayerService.isServiceRunning(PlayerActivity.this) && mediaPlayerService.isSpeechPlaying()) {
-                        mySpeech.pauseSpeech(mediaPlayerService);
+                        PlaybackController.pauseSpeech(mediaPlayerService);
 
                         // Google Analytics code
                         PresSpeechApplication application = (PresSpeechApplication) getApplication();
                         application.logGoogleAnalysticsEvent(activityName, "PauseButton", orator + "/" + title);
                     } else {
-                        mySpeech.startSpeech(PlayerActivity.this, mediaPlayerService);
+                        PlaybackController.startSpeech(mySpeech, PlayerActivity.this, mediaPlayerService);
 
                         // update volume in case user changes volume while mediaplayer was paused
                         needToUpdateVolume = true;
