@@ -94,7 +94,7 @@ public class WikipediaActivity extends AppCompatActivity {
         super.onResume();
 
         // create speech playback view if speech is playing
-        PlaybackController.createControllerView(WikipediaActivity.this, activityName, WikipediaActivity.class);
+        PlaybackController.createControllerView(WikipediaActivity.this, WikipediaActivity.class);
 
         // Google Analytics code
         Log.i(activityName, "Setting screen name: " + activityName);

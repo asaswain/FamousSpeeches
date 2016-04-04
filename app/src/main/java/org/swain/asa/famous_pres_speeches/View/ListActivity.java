@@ -93,9 +93,9 @@ public class ListActivity extends AppCompatActivity {
                 int oratorIndex = cursor.getColumnIndex(getResources().getString(R.string.sql_orator_column));
                 int titleIndex = cursor.getColumnIndex(getResources().getString(R.string.sql_title_column));
                 String orator = cursor.getString(oratorIndex);
-                String title =cursor.getString(titleIndex);
+                String title = cursor.getString(titleIndex);
 
-                PlaybackController.loadPlayerScreen(ListActivity.this, ListActivity.class, orator, title);
+                PlaybackController.loadPlayerScreen(ListActivity.this, orator, title);
 
                 // Google Analytics code
                 PresSpeechApplication application = (PresSpeechApplication) getApplication();
@@ -162,7 +162,7 @@ public class ListActivity extends AppCompatActivity {
         super.onResume();
 
         // create speech playback view if speech is playing
-        PlaybackController.createControllerView(ListActivity.this, activityName, ListActivity.class);
+        PlaybackController.createControllerView(ListActivity.this, ListActivity.class);
 
         // Google Analytics code
         Log.i(activityName, "Setting screen name: " + activityName);

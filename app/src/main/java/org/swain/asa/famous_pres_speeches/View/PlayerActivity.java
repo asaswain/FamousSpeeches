@@ -279,13 +279,15 @@ public class PlayerActivity extends AppCompatActivity {
         stopButton.setOnClickListener(new Button.OnClickListener() {
             @Override
             public void onClick (View v){
-                if (MediaPlayerService.isServiceRunning(PlayerActivity.this)) {
-                    pausePlayButton.setText(getResources().getString(R.string.play_button));
-                    mediaPlayerService.stopPlayback();
-                    // Google Analytics code
-                    PresSpeechApplication application = (PresSpeechApplication) getApplication();
-                    application.logGoogleAnalysticsEvent(activityName, "StopButton", orator + "/" + title);
-                    isSpeechLoading = false;
+                if (mySpeech != null) {
+                    if (MediaPlayerService.isServiceRunning(PlayerActivity.this) && mediaPlayerService.isSpeechPlaying()) {
+                        pausePlayButton.setText(getResources().getString(R.string.play_button));
+                        mediaPlayerService.stopPlayback();
+                        // Google Analytics code
+                        PresSpeechApplication application = (PresSpeechApplication) getApplication();
+                        application.logGoogleAnalysticsEvent(activityName, "StopButton", orator + "/" + title);
+                        isSpeechLoading = false;
+                    }
                 }
             }
         });

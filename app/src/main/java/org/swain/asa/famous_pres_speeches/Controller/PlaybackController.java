@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.os.Handler;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -17,6 +16,7 @@ import org.swain.asa.famous_pres_speeches.Model.CurrentlyPlaying;
 import org.swain.asa.famous_pres_speeches.Model.Speech;
 import org.swain.asa.famous_pres_speeches.PresSpeechApplication;
 import org.swain.asa.famous_pres_speeches.R;
+import org.swain.asa.famous_pres_speeches.View.PlayerActivity;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -45,21 +45,18 @@ import mehdi.sakout.fancybuttons.FancyButton;
  */
 public class PlaybackController {
 
-    public static void createControllerView(final Activity currentActivity, final String activityName, final Class c) {
+    /**
+     * Create view containing mini controller showing currently playing speech and play/pause control button
+     * @param currentActivity - current activity instance
+     * @param fromClass - class that callied this method to create view
+     */
+    public static void createControllerView(final Activity currentActivity, final Class fromClass) {
         RelativeLayout statusLayout = (RelativeLayout) currentActivity.findViewById(R.id.statusWindow);
 
         final Speech currentSpeech = CurrentlyPlaying.getCurrentlyPlayingSpeech();
         final MediaPlayerService currentService = CurrentlyPlaying.getCurrentlyPlayingService();
 
         int layoutHeight;
-        if (currentSpeech == null || !CurrentlyPlaying.isSpeechInitialized()) {
-            layoutHeight = 0;
-        } else {
-            layoutHeight = ViewGroup.LayoutParams.WRAP_CONTENT;
-        }
-
-        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,layoutHeight);
-        statusLayout.setLayoutParams(params);
 
         if (currentSpeech != null && CurrentlyPlaying.isSpeechInitialized()) {
             TextView currentlyPlayingNameView = (TextView) currentActivity.findViewById(R.id.currentlyPlayingName);
@@ -68,7 +65,7 @@ public class PlaybackController {
             currentlyPlayingNameView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    loadPlayerScreen(currentActivity, c, currentSpeech.getOrator().getFullName(), currentSpeech.getTitle());
+                    loadPlayerScreen(currentActivity, currentSpeech.getOrator().getFullName(), currentSpeech.getTitle());
                 }
             });
 
@@ -86,20 +83,19 @@ public class PlaybackController {
 
                         // Google Analytics code
                         PresSpeechApplication application = (PresSpeechApplication) currentActivity.getApplication();
-                        application.logGoogleAnalysticsEvent(activityName, "PauseButton", orator + "/" + title);
+                        application.logGoogleAnalysticsEvent(fromClass.getName(), "PauseButton", orator + "/" + title);
                     } else {
                         startSpeech(CurrentlyPlaying.getCurrentlyPlayingSpeech(), currentActivity, currentService);
 
                         // Google Analytics code
                         PresSpeechApplication application = (PresSpeechApplication) currentActivity.getApplication();
-                        application.logGoogleAnalysticsEvent(activityName, "PlayButton", orator + "/" + title);
+                        application.logGoogleAnalysticsEvent(fromClass.getName(), "PlayButton", orator + "/" + title);
                     }
                 }
             });
 
             final Runnable myRunnable = new Runnable() {
                 public void run() {
-                    Log.d("is playing = ", "" + CurrentlyPlaying.getCurrentlyPlayingService().isSpeechPlaying());
                     if (CurrentlyPlaying.getCurrentlyPlayingService().isSpeechPlaying()) {
                         currentlyPlayingButton.setText(currentActivity.getResources().getString(R.string.pause_button));
                     } else {
@@ -116,12 +112,24 @@ public class PlaybackController {
                     myHandler.post(myRunnable);
                 }
             }, 0, 1000);
+
+            layoutHeight = ViewGroup.LayoutParams.WRAP_CONTENT;
+        } else {
+            layoutHeight = 0;
         }
+
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,layoutHeight);
+        statusLayout.setLayoutParams(params);
     }
 
     /**
-     * This starts playing the mediaPlayer and initialized the speech playback if necessary
+     *
+     * This starts playing the mediaPlayer and initializes the speech playback if necessary
+     * @param currentSpeech - object containing current speech
+     * @param currentActivity - current actiivty instance
+     * @param mediaPlayerService - current media player service
      */
+
     public static void startSpeech(Speech currentSpeech, Activity currentActivity, MediaPlayerService mediaPlayerService) {
         if (CurrentlyPlaying.isSpeechInitialized()) {
             mediaPlayerService.startPlayback();
@@ -139,14 +147,22 @@ public class PlaybackController {
         }
     }
 
-    // pause current speech
+    /**
+     * This pauses the current speech
+     * @param mediaPlayerService - media player service to pause
+     */
     public static void pauseSpeech(MediaPlayerService mediaPlayerService) {
         mediaPlayerService.pausePlayback();
     }
 
-    // load PlayerActivity screen for current speech
-    public static void loadPlayerScreen(Activity currentActvity, Class c, String oratorName, String speechName) {
-        Intent intent = new Intent(currentActvity.getBaseContext(), c);
+    /**
+     * This loads PlayerActivity screen for current speech
+     * @param currentActvity - current activity instance
+     * @param oratorName - name of orator
+     * @param speechName - name of speech
+     */
+    public static void loadPlayerScreen(Activity currentActvity, String oratorName, String speechName) {
+        Intent intent = new Intent(currentActvity.getBaseContext(), PlayerActivity.class);
         intent.putExtra("oratorData", oratorName);
         intent.putExtra("titleData", speechName);
         currentActvity.startActivity(intent);

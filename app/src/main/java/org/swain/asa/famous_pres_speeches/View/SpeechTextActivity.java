@@ -108,7 +108,7 @@ public class SpeechTextActivity extends AppCompatActivity {
         super.onResume();
 
         // create speech playback view if speech is playing
-        PlaybackController.createControllerView(SpeechTextActivity.this, activityName, SpeechTextActivity.class);
+        PlaybackController.createControllerView(SpeechTextActivity.this, SpeechTextActivity.class);
 
         // Google Analytics code
         Log.i(activityName, "Setting screen name: " + activityName);
